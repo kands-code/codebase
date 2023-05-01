@@ -4,7 +4,7 @@ matrix_src = [
 
 matrixlib = static_library('matrix',
   matrix_src,
-  include_directories: inc,
+  include_directories: header_dir,
   dependencies: cc_deps,
   install: true,
 )

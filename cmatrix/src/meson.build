@@ -4,7 +4,9 @@ project('cmatrix', 'c',
   default_options : ['c_std=c17'],
 )
 
-inc = include_directories('../include')
+# install headers
+header_dir = include_directories('include')
+install_subdir('include', install_dir: '')
 
 cc = meson.get_compiler('c')
 cc_deps = [
@@ -14,7 +16,7 @@ cc_deps = [
 subdir('matrix')
 
 executable('app', 'main.c',
-  include_directories: inc,
+  include_directories: header_dir,
   dependencies: cc_deps,
   link_with: matrixlib,
 )

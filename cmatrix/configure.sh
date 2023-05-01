@@ -35,6 +35,10 @@ else
   esac
 
   # start configuration
+  if [[ -d "$curr_dir/output" ]]; then
+    # remove previous configuration
+    rm -r "$curr_dir/output"
+  fi
   meson setup "$curr_dir/output" "$curr_dir/src" \
     --native-file "$curr_dir/src/compiler.conf" \
     --buildtype "$build_type" \

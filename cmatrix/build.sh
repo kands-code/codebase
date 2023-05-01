@@ -1,4 +1,4 @@
-#! /bin/env bash
+#!/bin/env bash
 
 curr_dir=$(pwd)
 default_pack_dir="pack"

@@ -1,59 +1,48 @@
 #! /bin/env bash
 
-rootDir=$(pwd)
+curr_dir=$(pwd)
 
-if [[ "$#" -gt "2" ]]; then
-  echo "Too Many Arguments!"
-  echo "Usage: ./configure.sh [arch] [type]"
-  echo "    arch: linux or win"
-  echo "    type: release or debug"
-  exit 1
-elif [[ "$#" -lt "2" ]]; then
-  echo "Too Less Arguments!"
-  echo "Usage: ./configure.sh [arch] [type]"
-  echo "    arch: linux or win"
-  echo "    type: release or debug"
-  exit 1
-else
-  # get generator
-  case "$1" in
-  "win")
-    gen="MinGW Makefiles"
-    ;;
-  "linux")
-    gen="Unix Makefiles"
-    ;;
-  *)
-    echo "Wrong Platform!"
+function help_prompt() {
+  if [[ ! -z "$1" ]]; then
+    echo "$1"
+  fi
+  echo "usage: ./configure.sh [type]"
+  echo "  type:"
+  echo "    release: [rR]ealse"
+  echo "    debug: [dD]ebug"
+  if [[ -z "$1" ]]; then
     exit 1
-    ;;
-  esac
+  else
+    exit 0
+  fi
+}
 
+if [[ "$#" -lt "1" ]]; then
+  help_prompt "need arguments!"
+else
   # get build type
-  case "$2" in
-  "release")
-    buildType="Release"
+  case "$1" in
+  [rR]*)
+    build_type="release"
     ;;
-  "debug")
-    buildType="Debug"
+  [dD]*)
+    build_type="debug"
     ;;
   *)
-    echo "Wrong Build Type!"
+    echo "wrong build type!"
     exit 1
     ;;
   esac
 
   # start configuration
-  cmake -B output -S "$rootDir/src/" \
-    -DCMAKE_BUILD_TYPE="$buildType" \
-    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-    -DCMAKE_POSITION_INDEPENDENT_CODE=TRUE \
-    -Wdev -Wdeprecated \
-    -G "$gen"
+  meson setup "$curr_dir/output" "$curr_dir/src" \
+    --native-file "$curr_dir/src/compiler.conf" \
+    --buildtype "$build_type" \
+    --werror --wipe
   # for clangd
-  if [ -f "$rootDir/output/compile_commands.json" ]; then
-    cp "$rootDir/output/compile_commands.json" "$rootDir/src/"
+  if [ -f "$curr_dir/output/compile_commands.json" ]; then
+    cp "$curr_dir/output/compile_commands.json" "$curr_dir/src/"
   else
-    echo "Generate compile_commands.json Failed!"
+    echo "generate compile_commands.json failed!"
   fi
 fi

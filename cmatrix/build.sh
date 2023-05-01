@@ -1,27 +1,29 @@
 #! /bin/env bash
 
-rootDir=$(pwd)
+curr_dir=$(pwd)
 
 if [[ "$#" -eq "1" ]]; then
   if [[ "clean" = "$1" ]]; then
-    if [[ -d "$rootDir/output" ]]; then
-      rm -r "$rootDir/output"
+    if [[ -d "$curr_dir/output" ]]; then
+      rm -r "$curr_dir/output"
     fi
 
-    if [[ -d "$rootDir/src/.cache" ]]; then
-      rm -r "$rootDir/src/.cache"
+    if [[ -d "$curr_dir/src/.cache" ]]; then
+      rm -r "$curr_dir/src/.cache"
     fi
   else
-    echo "Wrong Command!"
-    echo "You May Want: ./build.sh clean"
+    echo "wrong command!"
+    echo "you may want: ./build.sh clean"
   fi
 else
-  if [[ -d "$rootDir/output" ]]; then
-    cmake --build "$rootDir/output"
+  if [[ -d "$curr_dir/output" ]]; then
+    pushd "$curr_dir/output" &>/dev/null
+    meson compile
+    popd &>/dev/null
   else
     # do default config
-    source "$rootDir/configure.sh" linux debug
+    source "$curr_dir/configure.sh" debug
     # redo build
-    source "$rootDir/build.sh"
+    source "$curr_dir/build.sh"
   fi
 fi

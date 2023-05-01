@@ -1,20 +1,19 @@
 {
   "folders": [
-	{
-		"path": "."
-	},
-	{
-		"path": "hsdev"
-	},
-	{
-		"path": "cmatrix"
-	},
-	{
-		"path": "functional-rs"
-	},
-	{
-		"path": "cprimerplus"
-	}
-],
-  "settings": {}
+    {
+      "path": "."
+    },
+    {
+      "path": "hsdev"
+    },
+    {
+      "path": "cmatrix"
+    },
+    {
+      "path": "functional-rs"
+    },
+    {
+      "path": "cprimerplus"
+    }
+  ]
 }

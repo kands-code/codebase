@@ -14,6 +14,22 @@
     },
     {
       "path": "cprimerplus"
+    },
+    {
+      "path": "psqdev"
     }
-  ]
+  ],
+  "settings": {
+    "sqltools.connections": [
+      {
+        "previewLimit": 50,
+        "server": "localhost",
+        "port": 5432,
+        "driver": "PostgreSQL",
+        "name": "psqldev",
+        "database": "psqldev",
+        "username": "kands"
+      }
+    ]
+  }
 }

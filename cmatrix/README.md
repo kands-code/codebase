@@ -1,6 +1,6 @@
 # Matrix
 
-> License: GPL-3.0-or-later
+> License: MIT
 
 一个用 C 写的矩阵操作库，没有效率，就是自己写着玩
 

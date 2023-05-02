@@ -1,0 +1,12 @@
+create table cities (
+  name character varying(64) primary key,
+  country character varying(64),
+  population integer,
+  area integer
+);
+
+insert into cities (name, country, population, area)
+values ('Tokyo', 'Japan', 37732000, 8231),
+  ('Delhi', 'India', 32226000, 2344),
+  ('Shanghai', 'China', 24073000, 4333),
+  ('Sao Paulo', 'Brazil', 23086000, 3649);

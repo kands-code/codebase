@@ -3,7 +3,7 @@
 curr_dir=$(pwd)
 meson_command="compile"
 default_pack_dir="pack"
-default_pack_name='cmatrix.tar.gz'
+export default_pack_name='cmatrix.tar.gz'
 
 function delete_elems() {
   for elem in "$@"; do
@@ -26,7 +26,7 @@ if [[ "$#" -eq "1" ]]; then
     meson_command="install"
   else
     echo "wrong command!"
-    echo "you may want: ./build.sh clean"
+    echo "you may want './build.sh clean' or './build.sh install'"
     exit 1
   fi
 fi
@@ -41,7 +41,7 @@ if [[ -d "$curr_dir/output" ]]; then
   fi
 else
   # do default config
-  source "$curr_dir/configure.sh" debug
+  source "$curr_dir/configure.sh" release
   # redo build
-  source "$curr_dir/build.sh"
+  source "$curr_dir/build.sh" install
 fi

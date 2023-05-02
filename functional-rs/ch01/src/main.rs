@@ -1,5 +1,5 @@
-use ch01::add;
+use ch01::two_sum;
 
 fn main() {
-    println!("4 + 3 = {}", add(4, 3));
+    println!("ver: {:?}", two_sum(vec![4, 3, 2, 3], 6));
 }

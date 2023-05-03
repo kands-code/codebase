@@ -56,6 +56,26 @@ extern MatrixT *new_matrix_from_array(uint8_t row, uint8_t col,
                                       MatrixOrientation orientation,
                                       const complex float *array);
 
+/// @function: new_matrix_from_file (const char *,
+///                                  size_t *)
+///                                 -> Matrix **
+/// @param: <file_path> the path to the file
+/// @param: <matrix_number> number of matrix to read
+/// @return: matrices from file
+/// @info: read matrices from file
+extern MatrixT **new_matrix_from_file(const char *file_path,
+                                      size_t *matrix_number);
+
+/// @function: new_matrix_from_file (const char *, Matrix **,
+///                                  size_t)
+///                                 -> unit
+/// @param: <file_path> the path to the file
+/// @param: <matrices> the matrices to save
+/// @param: <matrix_number> number of matrix to save
+/// @info: save matrices to file filled by row
+extern void save_matrix_to_file(const char *file_path, MatrixT **matrices,
+                                size_t matrix_number);
+
 /// @function: copy_matrix (const MatrixT *)
 ///                        -> MatrixT *
 /// @param: <matrix> the original matrix

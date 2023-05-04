@@ -1,6 +1,11 @@
+/// @file: matrix/matrix.h
+/// @info: main header file of matrix library
+
 #pragma once
 #ifndef __MATRIX_MATRIX_H__
 #define __MATRIX_MATRIX_H__
+
+// include
 
 #include <complex.h>
 #include <stddef.h>
@@ -41,6 +46,14 @@ extern complex float new_complex(float x, float y);
 /// @return: the matrix with size (row, col) filled with zero
 /// @info: construct an zero matrix with size (row, col)
 extern MatrixT *new_matrix(uint8_t row, uint8_t col);
+
+/// @function: new_identity_matrix (uint8_t, uint8_t)
+///                                -> MatrixT *
+/// @param: <row> the row size of matrix
+/// @param: <col> the column size of matrix
+/// @return: the identity matrix with size (row, col)
+/// @info: construct an identity matrix with size (row, col)
+extern MatrixT *new_identity_matrix(uint8_t row, uint8_t col);
 
 /// @function: new_matrix_from_array (uint8_t, uint8_t,
 ///                                   MatrixOrientation,
@@ -136,6 +149,9 @@ extern MatrixT *get_matrix_col(const MatrixT *matrix, uint8_t col);
 /// @return: the trace of the matrix
 /// @info: get the trace of matrix
 extern complex float get_matrix_trace(const MatrixT *matrix);
+
+// ! TODO
+extern complex float get_matrix_determinant(const MatrixT *matrix);
 
 // functions: manipulate
 

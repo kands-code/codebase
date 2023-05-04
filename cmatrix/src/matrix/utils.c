@@ -1,4 +1,11 @@
+/// @file: matrix/utils.c
+/// @info: some utilities for matrix library
+
+// include
+
 #include "matrix/utils.h"
+#include <complex.h>
+#include <float.h>
 #include <stdarg.h>
 #include <stdio.h>
 
@@ -68,4 +75,18 @@ void log_error(const char *message, ...) {
   fprintf(stderr, "%s%s%s\n", ANSI_COLOR_RED, error_message, ANSI_COLOR_RESET);
   // end: close varing list
   va_end(args);
+}
+
+/// @function: is_complex_zero (complex float)
+///                            -> bool
+/// @param: <value> the value to check
+/// @return: if the value is zero, return true, or false
+/// @info: check whether a value is zero
+bool is_complex_zero(complex float value) {
+  float real = crealf(value);
+  float imag = cimagf(value);
+  if (!(ABS(real) > FLT_MIN && ABS(imag) > FLT_MIN)) {
+    return true;
+  }
+  return false;
 }

@@ -1,3 +1,8 @@
+/// @file: matrix/attribute_matrix.c
+/// @info: get attributes of matrices
+
+// include
+
 #include "matrix/matrix.h"
 #include "matrix/utils.h"
 #include <complex.h>
@@ -48,7 +53,8 @@ void set_matrix_val(MatrixT *matrix, uint8_t row, uint8_t col,
   }
   // boundary test: access position
   if (row == 0 || col == 0 || row > matrix->size[0] || col > matrix->size[1]) {
-    log_error("panic: %s out of boundary (%u, %u)", __func__, row, col);
+    log_error("panic: %s out of boundary (%u, %u)[%.3f%+.3f]", __func__, row,
+              col, crealf(val), cimagf(val));
     exit(EXIT_FAILURE);
   }
   // set: value at specific position
@@ -102,7 +108,7 @@ MatrixT *get_matrix_col(const MatrixT *matrix, uint8_t col) {
   // init: col vector
   MatrixT *col_vector = new_matrix(matrix->size[0], 1);
   // copy the column
-  for (size_t i = 1; i <= matrix->size[1]; ++i) {
+  for (size_t i = 1; i <= matrix->size[0]; ++i) {
     set_matrix_val(col_vector, i, 1, get_matrix_val(matrix, i, col));
   }
   // return: row vector

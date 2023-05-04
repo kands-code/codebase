@@ -1,3 +1,8 @@
+/// @file: matrix/init_matrix.c
+/// @info: init or delete a matrix
+
+// inlcude
+
 #include "matrix/matrix.h"
 #include "matrix/utils.h"
 #include <complex.h>
@@ -47,6 +52,25 @@ MatrixT *new_matrix(uint8_t row, uint8_t col) {
   }
   // return: zero matrix
   return matrix;
+}
+
+/// @function: new_identity_matrix (uint8_t, uint8_t)
+///                                -> MatrixT *
+/// @param: <row> the row size of matrix
+/// @param: <col> the column size of matrix
+/// @return: the identity matrix with size (row, col)
+/// @info: construct an identity matrix with size (row, col)
+MatrixT *new_identity_matrix(uint8_t row, uint8_t col) {
+  // get an empty matrix
+  MatrixT *identity_matrix = new_matrix(row, col);
+  // get the size of the diagonal of matrix
+  uint8_t matrix_diagonal_size = MIN(row, col);
+  // fill the diagonal with <1.0 + 0.0 I>
+  for (uint8_t i = 1; i <= matrix_diagonal_size; ++i) {
+    set_matrix_val(identity_matrix, i, i, new_complex(1.0f, 0.0f));
+  }
+  // return: identity matrix
+  return identity_matrix;
 }
 
 /// @function: new_matrix_from_array (uint8_t, uint8_t,

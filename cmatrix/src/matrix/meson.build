@@ -2,7 +2,8 @@ matrix_src = [
   'init_matrix.c',
   'attribute_matrix.c',
   'manipulate_matrix.c',
-  'utils.c'
+  'ext_matrix.c',
+  'utils.c',
 ]
 
 matrixlib = static_library('matrix',

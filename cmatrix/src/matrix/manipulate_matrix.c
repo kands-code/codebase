@@ -1,3 +1,8 @@
+/// @file: matrix/manipulate_matrix.c
+/// @info: manipulate matrices
+
+// include
+
 #include "matrix/matrix.h"
 #include "matrix/utils.h"
 #include <complex.h>
@@ -161,8 +166,7 @@ MatrixT *vector_col_row_product(const MatrixT *lhv, const MatrixT *rhv) {
     exit(EXIT_FAILURE);
   }
   // boundary test: compatible size
-  if (!(lhv->size[1] == 1 && rhv->size[0] == 1 &&
-        lhv->size[0] == rhv->size[1])) {
+  if (!(lhv->size[1] == 1 && rhv->size[0] == 1)) {
     log_error(
         "panic: lhv size (%u, %u) is not compatible with rhv size (%u, %u)",
         lhv->size[0], lhv->size[1], rhv->size[0], rhv->size[1]);

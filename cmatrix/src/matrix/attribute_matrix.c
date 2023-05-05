@@ -7,6 +7,9 @@
 #include "matrix/matrix_ext.h"
 #include "matrix/utils.h"
 #include <complex.h>
+#include <float.h>
+#include <math.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -116,6 +119,38 @@ MatrixT *get_matrix_col(const MatrixT *matrix, uint8_t col) {
   return col_vector;
 }
 
+/// @function: is_upper_triangle (const MatrixT *)
+///                              -> bool
+/// @param: <matrix> the matrix to check
+/// @return: if can be regarded as upper matrix, return true, or false
+/// @info: check a matrix whether a upper matrix
+bool is_upper_triangle(const MatrixT *matrix) {
+  // boundary test: null pointer
+  if (matrix == NULL) {
+    log_error("panic: null pointer error at %s", __func__);
+    exit(EXIT_FAILURE);
+  }
+  // boundary tes: square matrix
+  if (matrix->size[0] != matrix->size[1]) {
+    log_error("panic: matrix must be squared at %s with size (%u, %u)",
+              __func__, matrix->size[0], matrix->size[1]);
+    exit(EXIT_FAILURE);
+  }
+  // start check
+  for (uint8_t row = 2; row <= matrix->size[0]; ++row) {
+    for (uint8_t col = 1; col < row; ++col) {
+      // if any value under diagonal (include) is not zero
+      // return false
+      complex float val = get_matrix_val(matrix, row, col);
+      if (fabsf(crealf(val)) > FLT_MIN || fabsf(cimagf(val)) > FLT_MIN) {
+        return false;
+      }
+    }
+  }
+  // pass check
+  return true;
+}
+
 /// @function: get_matrix_trace (const MatrixT *)
 ///                             -> complex float
 /// @param: <matrix> the matrix to use
@@ -140,6 +175,26 @@ complex float get_matrix_trace(const MatrixT *matrix) {
   }
   // return: the trace
   return trace_value;
+}
+
+/// @function: get_matrix_frobenius_norm (const MatrixT *)
+///                                      -> complex float
+/// @param: <matrix> the matrix to use
+/// @return: the Frobenius Norm
+/// @info: get the Frobenius Norm of a matrix
+complex float get_matrix_frobenius_norm(const MatrixT *matrix) {
+  // boundary test: null pointer
+  if (matrix == NULL) {
+    log_error("panic: null pointer error at %s", __func__);
+    exit(EXIT_FAILURE);
+  }
+  // fnorm(A) = sqrt(sum(A^2))
+  complex float frobenius_norm = new_complex(0.0f, 0.0f);
+  for (uint16_t i = 0; i < matrix->size[0] * matrix->size[1]; ++i) {
+    frobenius_norm += matrix->data[i] * matrix->data[i];
+  }
+  // return: Frobenius Norm
+  return csqrtf(frobenius_norm);
 }
 
 /// @function: get_matrix_rank (const MatrixT *)

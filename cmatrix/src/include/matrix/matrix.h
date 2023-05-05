@@ -2,6 +2,7 @@
 /// @info: main header file of matrix library
 
 #pragma once
+#include <stdbool.h>
 #ifndef __MATRIX_MATRIX_H__
 #define __MATRIX_MATRIX_H__
 
@@ -150,12 +151,26 @@ extern MatrixT *get_matrix_row(const MatrixT *matrix, uint8_t row);
 /// @info: get the column of a matrix
 extern MatrixT *get_matrix_col(const MatrixT *matrix, uint8_t col);
 
+/// @function: is_upper_triangle (const MatrixT *)
+///                              -> bool
+/// @param: <matrix> the matrix to check
+/// @return: if can be regarded as upper matrix, return true, or false
+/// @info: check a matrix whether a upper matrix
+extern bool is_upper_triangle(const MatrixT *matrix);
+
 /// @function: get_matrix_trace (const MatrixT *)
 ///                             -> complex float
 /// @param: <matrix> the matrix to use
 /// @return: the trace of the matrix
 /// @info: get the trace of matrix
 extern complex float get_matrix_trace(const MatrixT *matrix);
+
+/// @function: get_matrix_frobenius_norm (const MatrixT *)
+///                                      -> complex float
+/// @param: <matrix> the matrix to use
+/// @return: the Frobenius Norm
+/// @info: get the Frobenius Norm of a matrix
+extern complex float get_matrix_frobenius_norm(const MatrixT *matrix);
 
 /// @function: get_matrix_rank (const MatrixT *)
 ///                            -> uint8_t

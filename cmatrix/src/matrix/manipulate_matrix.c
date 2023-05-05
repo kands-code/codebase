@@ -17,8 +17,8 @@
 /// @param: <matrix> the matrix to show
 /// @info: print the matrix with default precision
 void show_matrix(const MatrixT *matrix) {
-  // default precision: 3
-  show_matrix_with_precision(matrix, 3);
+  // default precision: 4
+  show_matrix_with_precision(matrix, 4);
 }
 
 /// @function: show_matrix (const MatrixT *,

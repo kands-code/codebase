@@ -6,18 +6,17 @@
 #include <stdlib.h>
 
 int main(void) {
-  complex float arr[] = {5, 5, 5, 5};
-  MatrixT *matrix = new_matrix_from_array(2, 2, ROW, arr);
+  complex float arr[] = {3, 4, 0, 1, 3, 0, 0, 0, 2};
+  MatrixT *matrix = new_matrix_from_array(3, 3, ROW, arr);
   show_matrix(matrix);
   log_info("=========================");
-  MatrixT **lu_res = decomposition_matrix_lu(matrix);
+  MatrixT *eigen = get_matrix_eigenvalue_qr(matrix, 50);
 
-  show_matrix(lu_res[0]);
-  log_info("=========================");
-  show_matrix(lu_res[1]);
+  show_matrix(eigen);
   log_info("=========================");
 
+  drop_matrix(eigen);
   drop_matrix(matrix);
-  drop_matrices(lu_res, 2);
+
   return 0;
 }

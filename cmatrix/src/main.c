@@ -6,19 +6,17 @@
 #include <stdlib.h>
 
 int main(void) {
-  complex float arr[] = {3, 4, 0, 1, 3, 0, 0, 0, 2};
-  MatrixT *matrix = new_matrix_from_array(3, 3, ROW, arr);
-  show_matrix(matrix);
-  log_info("=========================");
-  MatrixT **eigen = get_matrix_eigenvalue_qr(matrix, 50);
+  complex float arr1[] = {3, -3, 1};
+  complex float arr2[] = {4, 9, 2};
+  MatrixT *mat1 = new_matrix_from_array(3, 1, ROW, arr1);
+  MatrixT *mat2 = new_matrix_from_array(3, 1, ROW, arr2);
 
-  show_matrix(eigen[0]);
-  log_info("=========================");
-  show_matrix(eigen[1]);
-  log_info("=========================");
+  MatrixT *kro = vector_cross_product_3d(mat1, mat2);
+  show_matrix(kro);
+  drop_matrix(kro);
 
-  drop_matrices(eigen, 2);
-  drop_matrix(matrix);
+  drop_matrix(mat2);
+  drop_matrix(mat1);
 
   return 0;
 }

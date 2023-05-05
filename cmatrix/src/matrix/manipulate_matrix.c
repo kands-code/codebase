@@ -7,6 +7,7 @@
 #include "matrix/utils.h"
 #include <complex.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -77,17 +78,17 @@ MatrixT *transpose_matrix(const MatrixT *matrix) {
 ///                              -> MatrixT *
 /// @param: <scalar> the scalar to use
 /// @param: <matrix> the matrix to use
-/// @return: the production of scalar and matrix
-/// @info: do scalar production with the scalar and the matrix
+/// @return: the product of scalar and matrix
+/// @info: do scalar product with the scalar and the matrix
 MatrixT *scalar_mul_matrix(complex float scalar, const MatrixT *matrix) {
   // boundary test: null pointer
   if (matrix == NULL) {
     log_error("panic: null pointer error at %s", __func__);
     exit(EXIT_FAILURE);
   }
-  // init: production matrix
+  // init: product matrix
   MatrixT *prod_matrix = new_matrix(matrix->size[0], matrix->size[1]);
-  // do scalar production
+  // do scalar product
   for (size_t i = 0; i < matrix->size[0] * matrix->size[1]; ++i) {
     prod_matrix->data[i] = matrix->data[i] * scalar;
   }
@@ -127,8 +128,8 @@ MatrixT *add_matrix(const MatrixT *lhm, const MatrixT *rhm) {
 ///                                 -> complex float
 /// @param: <lhv> the left hand side vector
 /// @param: <rhv> the right hand side vector
-/// @return: the inner production of the two vectors
-/// @info: do common inner production of two vectors
+/// @return: the inner product of the two vectors
+/// @info: do common inner product of two vectors
 complex float vector_inner_product(const MatrixT *lhv, const MatrixT *rhv) {
   // boundary test: null pointer
   if (lhv == NULL || rhv == NULL) {
@@ -157,8 +158,8 @@ complex float vector_inner_product(const MatrixT *lhv, const MatrixT *rhv) {
 ///                                   -> MatrixT *
 /// @param: <lhv> the left hand side vector (coloumn vector)
 /// @param: <rhv> the right hand side vector (row vector)
-/// @return: the inner production of the two vectors
-/// @info: do inner production of two vectors
+/// @return: the inner product of the two vectors
+/// @info: do inner product of two vectors
 MatrixT *vector_col_row_product(const MatrixT *lhv, const MatrixT *rhv) {
   // boundary test: null pointer
   if (lhv == NULL || rhv == NULL) {
@@ -174,7 +175,7 @@ MatrixT *vector_col_row_product(const MatrixT *lhv, const MatrixT *rhv) {
   }
   // init: inner product
   MatrixT *inner_prod = new_matrix(lhv->size[0], rhv->size[1]);
-  // do inner production
+  // do inner product
   for (size_t i = 1; i <= lhv->size[0]; ++i) {
     for (size_t j = 1; j <= rhv->size[1]; ++j) {
       set_matrix_val(inner_prod, i, j,
@@ -184,12 +185,49 @@ MatrixT *vector_col_row_product(const MatrixT *lhv, const MatrixT *rhv) {
   return inner_prod;
 }
 
+/// @function: vector_cross_product_3d (const MatrixT *, const MatrixT *)
+///                                    -> MatrixT *
+/// @param: <lhv> the left hand side vector (column vector)
+/// @param: <rhv> the right hand side vector (row vector)
+/// @return: the cross product of the two vectors
+/// @info: do cross product of two vectors
+MatrixT *vector_cross_product_3d(const MatrixT *lhv, const MatrixT *rhv) {
+  // boundary test: null pointer
+  if (lhv == NULL || rhv == NULL) {
+    log_error("panic: null pointer error at %s", __func__);
+    exit(EXIT_FAILURE);
+  }
+  // init: cross product
+  MatrixT *cross_prod;
+  if (lhv->size[0] == 1 && rhv->size[0] == 1 && lhv->size[1] == 3 &&
+      rhv->size[1] == 3) {
+    cross_prod = new_matrix(1, 3);
+  } else if (lhv->size[1] == 1 && rhv->size[1] == 1 && lhv->size[0] == 3 &&
+             rhv->size[0] == 3) {
+    cross_prod = new_matrix(3, 1);
+  } else {
+    log_error("panic: lhv (%u, %u) is not compatible with rhv (%u, %u)"
+              "or not a 3d vector",
+              lhv->size[0], lhv->size[1], rhv->size[0], rhv->size[1]);
+    exit(EXIT_FAILURE);
+  }
+  // calculate cross product
+  cross_prod->data[0] =
+      lhv->data[1] * rhv->data[2] - lhv->data[2] * rhv->data[1];
+  cross_prod->data[1] =
+      lhv->data[2] * rhv->data[0] - lhv->data[0] * rhv->data[2];
+  cross_prod->data[2] =
+      lhv->data[0] * rhv->data[1] - lhv->data[1] * rhv->data[0];
+  // return: cross product
+  return cross_prod;
+}
+
 /// @function: mul_matrix (const MatrixT *, const MatrixT *)
 ///                       -> MatrixT *
 /// @param: <lhm> the left hand side matrix
 /// @param: <rhm> the right hand side matrix
-/// @return: the production of the two matrices
-/// @info: do production of two matrices
+/// @return: the product of the two matrices
+/// @info: do product of two matrices
 MatrixT *mul_matrix(const MatrixT *lhm, const MatrixT *rhm) {
   // boundary test: null pointer
   if (lhm == NULL || rhm == NULL) {
@@ -203,9 +241,9 @@ MatrixT *mul_matrix(const MatrixT *lhm, const MatrixT *rhm) {
         lhm->size[0], lhm->size[1], rhm->size[0], rhm->size[1]);
     exit(EXIT_FAILURE);
   }
-  // init: production matrix
+  // init: product matrix
   MatrixT *prod_matrix = new_matrix(lhm->size[0], rhm->size[1]);
-  // do production
+  // do product
   for (size_t i = 1; i <= lhm->size[1]; ++i) {
     MatrixT *col_vector = get_matrix_col(lhm, i);
     MatrixT *row_vector = get_matrix_row(rhm, i);
@@ -218,4 +256,34 @@ MatrixT *mul_matrix(const MatrixT *lhm, const MatrixT *rhm) {
     prod_matrix = new_prod_matrix;
   }
   return prod_matrix;
+}
+
+/// @function: tensor_product_matrix (const MatrixT *, const MatrixT *)
+///                                  -> MatrixT *
+/// @param: <lhm> the left hand side matrix
+/// @param: <rhm> the right hand side matrix
+/// @return: the tensor product of the two matrices
+/// @info: do tensor product of two matrices
+MatrixT *tensor_product_matrix(const MatrixT *lhm, const MatrixT *rhm) {
+  // boundary test: null pointer
+  if (lhm == NULL || rhm == NULL) {
+    log_error("panic: null pointer error at %s", __func__);
+    exit(EXIT_FAILURE);
+  }
+  // init: Kronecker Product
+  MatrixT *kronecker_product_matrix =
+      new_matrix(lhm->size[0] * rhm->size[0], lhm->size[1] * rhm->size[1]);
+  for (uint8_t i = 1; i <= lhm->size[0]; ++i) {
+    for (uint8_t j = 1; j <= lhm->size[1]; ++j) {
+      for (uint8_t x = 1; x <= rhm->size[0]; ++x) {
+        for (uint8_t y = 1; y <= rhm->size[1]; ++y) {
+          set_matrix_val(kronecker_product_matrix, rhm->size[0] * (i - 1) + x,
+                         rhm->size[1] * (j - 1) + y,
+                         get_matrix_val(lhm, i, j) * get_matrix_val(rhm, x, y));
+        }
+      }
+    }
+  }
+  // return: Kronecker Product
+  return kronecker_product_matrix;
 }

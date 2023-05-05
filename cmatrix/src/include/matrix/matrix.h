@@ -259,8 +259,8 @@ extern MatrixT *transpose_matrix(const MatrixT *matrix);
 ///                              -> MatrixT *
 /// @param: <scalar> the scalar to use
 /// @param: <matrix> the matrix to use
-/// @return: the production of scalar and matrix
-/// @info: do scalar production with the scalar and the matrix
+/// @return: the product of scalar and matrix
+/// @info: do scalar product with the scalar and the matrix
 extern MatrixT *scalar_mul_matrix(complex float scalar, const MatrixT *matrix);
 
 /// @function: add_matrix (const MatrixT *, const MatrixT *)
@@ -275,8 +275,8 @@ extern MatrixT *add_matrix(const MatrixT *lhm, const MatrixT *rhm);
 ///                                 -> complex float
 /// @param: <lhv> the left hand side vector
 /// @param: <rhv> the right hand side vector
-/// @return: the inner production of the two vectors
-/// @info: do common inner production of two vectors
+/// @return: the inner product of the two vectors
+/// @info: do common inner product of two vectors
 extern complex float vector_inner_product(const MatrixT *lhv,
                                           const MatrixT *rhv);
 
@@ -284,16 +284,32 @@ extern complex float vector_inner_product(const MatrixT *lhv,
 ///                                   -> MatrixT *
 /// @param: <lhv> the left hand side vector (column vector)
 /// @param: <rhv> the right hand side vector (row vector)
-/// @return: the inner production of the two vectors
-/// @info: do inner production of two vectors
+/// @return: the inner product of the two vectors
+/// @info: do inner product of two vectors
 extern MatrixT *vector_col_row_product(const MatrixT *lhv, const MatrixT *rhv);
+
+/// @function: vector_cross_product_3d (const MatrixT *, const MatrixT *)
+///                                    -> MatrixT *
+/// @param: <lhv> the left hand side vector (column vector)
+/// @param: <rhv> the right hand side vector (row vector)
+/// @return: the cross product of the two vectors
+/// @info: do cross product of two vectors
+extern MatrixT *vector_cross_product_3d(const MatrixT *lhv, const MatrixT *rhv);
 
 /// @function: mul_matrix (const MatrixT *, const MatrixT *)
 ///                       -> MatrixT *
 /// @param: <lhm> the left hand side matrix
 /// @param: <rhm> the right hand side matrix
-/// @return: the production of the two matrices
-/// @info: do production of two matrices
+/// @return: the product of the two matrices
+/// @info: do product of two matrices
 extern MatrixT *mul_matrix(const MatrixT *lhm, const MatrixT *rhm);
+
+/// @function: tensor_product_matrix (const MatrixT *, const MatrixT *)
+///                                  -> MatrixT *
+/// @param: <lhm> the left hand side matrix
+/// @param: <rhm> the right hand side matrix
+/// @return: the tensor product of the two matrices
+/// @info: do tensor product of two matrices
+extern MatrixT *tensor_product_matrix(const MatrixT *lhm, const MatrixT *rhm);
 
 #endif

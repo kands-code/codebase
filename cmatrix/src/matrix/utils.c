@@ -6,7 +6,9 @@
 #include "matrix/utils.h"
 #include <complex.h>
 #include <float.h>
+#include <math.h>
 #include <stdarg.h>
+#include <stdbool.h>
 #include <stdio.h>
 
 // constants: ANSI color control sequences
@@ -83,10 +85,11 @@ void log_error(const char *message, ...) {
 /// @return: if the value is zero, return true, or false
 /// @info: check whether a value is zero
 bool is_complex_zero(complex float value) {
-  float real = crealf(value);
-  float imag = cimagf(value);
-  if (!(ABS(real) > FLT_MIN && ABS(imag) > FLT_MIN)) {
-    return true;
+  complex float abs_value = cabsf(value);
+  float real = crealf(abs_value);
+  float imag = cimagf(abs_value);
+  if (real > FLT_MIN || imag > FLT_MIN) {
+    return false;
   }
-  return false;
+  return true;
 }

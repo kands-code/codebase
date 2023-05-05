@@ -102,6 +102,13 @@ extern MatrixT *copy_matrix(const MatrixT *matrix);
 /// @info: delete a matrix
 extern void drop_matrix(MatrixT *matrix);
 
+/// @function: drop_matrices (Matrix **, size_t)
+///                          -> unit
+/// @param: <matrices> matrices to drop
+/// @param: <matrices_number> number of matrices to drop
+/// @info: delete matrices at one time
+extern void drop_matrices(MatrixT **matrices, size_t matrices_number);
+
 // functions: attribute
 
 /// @function: get_matrix_val (const MatrixT *, uint8_t,
@@ -150,8 +157,64 @@ extern MatrixT *get_matrix_col(const MatrixT *matrix, uint8_t col);
 /// @info: get the trace of matrix
 extern complex float get_matrix_trace(const MatrixT *matrix);
 
-// ! TODO
+/// @function: get_matrix_rank (const MatrixT *)
+///                            -> uint8_t
+/// @param: <matrix> the matrix to use
+/// @return: the rank of the matrix
+/// @info: get the matrix rank
+extern uint8_t get_matrix_rank(const MatrixT *matrix);
+
+/// @function: get_submatrix (const MatrixT *, uint8_t, uint8_t)
+///                          -> MatrixT *
+/// @param: <matrix> the matrix to use
+/// @param: <row> the row to omit
+/// @param: <col> the col to omit
+/// @return: the submatrix of matrix
+/// @info: get the submatrix of a matrix
+extern MatrixT *get_submatrix(const MatrixT *matrix, uint8_t row, uint8_t col);
+
+/// @function: get_matrix_cofactor (const MatrixT *, uint8_t,
+///                                 uint8_t)
+///                                -> complex float
+/// @param: <matrix> the matrix to use
+/// @param: <row> the row to omit
+/// @param: <col> the col to omit
+/// @return: the cofacter of the matrix
+/// @info: get the cofactor of a matrix
+extern complex float get_matrix_cofactor(const MatrixT *matrix, uint8_t row,
+                                         uint8_t col);
+
+/// @function: get_matrix_algebraic_cofactor (const MatrixT *, uint8_t,
+///                                           uint8_t)
+///                                          -> complex float
+/// @param: <matrix> the matrix to use
+/// @param: <row> the row to omit
+/// @param: <col> the col to omit
+/// @return: the algebraic cofacter of the matrix
+/// @info: get the algebraic cofactor of a matrix
+extern complex float get_matrix_algebraic_cofactor(const MatrixT *matrix,
+                                                   uint8_t row, uint8_t col);
+
+/// @function: get_matrix_determinant (const MatrixT *)
+///                                   -> complex float
+/// @param: <matrix> the matrix to use
+/// @return: the determinant of the matrix
+/// @info: calculate the determinant of a matrix
 extern complex float get_matrix_determinant(const MatrixT *matrix);
+
+/// @function: get_adjoint_matrix (const MatrixT *)
+///                               -> MatrixT *
+/// @param: the matrix to use
+/// @return: the adjoint matrix of the matrix
+/// @info: get the adjoint matrix of a matrix
+extern MatrixT *get_adjoint_matrix(const MatrixT *matrix);
+
+/// @function: get_inverse_matrix (const MatrixT *)
+///                               -> MatrixT *
+/// @param: <matrix> matrix to use
+/// @return: the inverse matrix
+/// @info: get the inverse matrix of a matrix
+extern MatrixT *get_inverse_matrix(const MatrixT *matrix);
 
 // functions: manipulate
 

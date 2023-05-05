@@ -28,10 +28,6 @@
 /// @info: check a number whether an even number
 #define IS_EVEN(x) (!IS_ODD(x))
 
-/// @macro: ABS (x)
-/// @info: simple way to get the absolute value of x
-#define ABS(x) (x) < 0 ? (-(x)) : (x)
-
 // functions: log
 
 /// @function: log_info (const char *, ...)

@@ -13,12 +13,12 @@
 
 // function: extensions
 
-/// @function: decomposition_matrix_lu (const MatrixT *)
+/// @function: upper_triangularize_matrix (const MatrixT *)
 ///                                    -> MatrixT **
 /// @param: <matrix> the matrix to decomposition
 /// @return: the result of LU decomposition of matrix
 /// @info: get the INVERSE Left matrix and Right matrix
-MatrixT **decomposition_matrix_lu(const MatrixT *matrix) {
+MatrixT **upper_triangularize_matrix(const MatrixT *matrix) {
   // boundary test: null pointer
   if (matrix == NULL) {
     log_error("panic: null pointer error at %s", __func__);
@@ -36,8 +36,8 @@ MatrixT **decomposition_matrix_lu(const MatrixT *matrix) {
   lu_result[1] = copy_matrix(matrix);
   size_t change_cnt = 0;
   // strat: elimilation
-
-  for (uint8_t iter = 1; iter < matrix_diagonal_size;) {
+  for (uint8_t iter = 1;
+       iter < matrix_diagonal_size && iter + offset <= matrix_col;) {
     // check: pivot can not be zero
     if (is_complex_zero(get_matrix_val(lu_result[1], iter, iter + offset))) {
       // do row exchange
@@ -106,24 +106,36 @@ MatrixT **decomposition_matrix_lu(const MatrixT *matrix) {
   return lu_result;
 }
 
+/// @function: decomposition_matrix_lu (const MatrixT *)
+///                                    -> MatrixT **
+/// @param: <matrix> the matrix to decomposition
+/// @return: the result of LU decomposition of matrix
+/// @info: get the Left matrix and Right matrix
+MatrixT **decomposition_matrix_lu(const MatrixT *matrix) {
+  MatrixT **lu_result = upper_triangularize_matrix(matrix);
+  MatrixT *left_matrix = get_inverse_matrix(lu_result[0]);
+  drop_matrix(lu_result[0]);
+  lu_result[0] = left_matrix;
+  return lu_result;
+}
+
 /// @function: simplify_matrix (const MatrixT *)
 ///                            -> MatrixT *
 /// @param: <matrix> the matrix to simplify
 /// @return: the simplified matrix
 /// @info: get the simplest form of the matrix
 MatrixT *simplify_matrix(const MatrixT *matrix) {
-  MatrixT **lu_result = decomposition_matrix_lu(matrix);
+  MatrixT **lu_result = upper_triangularize_matrix(matrix);
   MatrixT *simplest_matrix = copy_matrix(lu_result[1]);
-  drop_matrix(lu_result[1]);
-  drop_matrix(lu_result[0]);
-  free(lu_result);
+  drop_matrices(lu_result, 2);
   // get basic info of matrix
   uint8_t matrix_row = simplest_matrix->size[0];
   uint8_t matrix_col = simplest_matrix->size[1];
   // get matrix diagonal size
   uint8_t matrix_diagonal_size = MIN(matrix_row, matrix_col);
   uint8_t offset = 0;
-  for (uint8_t iter = 1; iter <= matrix_diagonal_size;) {
+  for (uint8_t iter = 1;
+       iter <= matrix_diagonal_size && iter + offset <= matrix_col;) {
     complex float pivot_value =
         get_matrix_val(simplest_matrix, iter, iter + offset);
     if (is_complex_zero(pivot_value)) {

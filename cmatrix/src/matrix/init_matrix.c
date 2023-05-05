@@ -262,3 +262,15 @@ extern void drop_matrix(MatrixT *matrix) {
   // free the matrix
   free(matrix);
 }
+
+/// @function: drop_matrices (Matrix **, size_t)
+///                          -> unit
+/// @param: <matrices> matrices to drop
+/// @param: <matrices_number> number of matrices to drop
+/// @info: delete matrices at one time
+void drop_matrices(MatrixT **matrices, size_t matrices_number) {
+  for (size_t i = 0; i < matrices_number; ++i) {
+    drop_matrix(matrices[i]);
+  }
+  free(matrices);
+}

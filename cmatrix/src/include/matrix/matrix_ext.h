@@ -11,11 +11,18 @@
 
 // function: extensions
 
-/// @function: decomposition_matrix_lu (const MatrixT *)
+/// @function: upper_triangularize_matrix (const MatrixT *)
 ///                                    -> MatrixT **
 /// @param: <matrix> the matrix to decomposition
 /// @return: the result of LU decomposition of matrix
 /// @info: get the INVERSE Left matrix and Right matrix
+extern MatrixT **upper_triangularize_matrix(const MatrixT *matrix);
+
+/// @function: decomposition_matrix_lu (const MatrixT *)
+///                                    -> MatrixT **
+/// @param: <matrix> the matrix to decomposition
+/// @return: the result of LU decomposition of matrix
+/// @info: get the Left matrix and Right matrix
 extern MatrixT **decomposition_matrix_lu(const MatrixT *matrix);
 
 /// @function: simplify_matrix (const MatrixT *)

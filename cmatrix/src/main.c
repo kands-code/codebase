@@ -6,20 +6,18 @@
 #include <stdlib.h>
 
 int main(void) {
-  // size_t cnt = 0;
-  // MatrixT **matrices = new_matrix_from_file("data/test.mt", &cnt);
-  // for (size_t i = 0; i < cnt; ++i) {
-  //   show_matrix(matrices[i]);
-  // }
-  // for (size_t i = 0; i < cnt; ++i) {
-  //   drop_matrix(matrices[i]);
-  // }
-  // free(matrices);
-  complex float arr1[] = {2, -1, 3, 1, 4, -2, 5, 4, 6, -3, 8, 4};
-  MatrixT *mat1 = new_matrix_from_array(3, 4, ROW, arr1);
-  MatrixT *sim = simplify_matrix(mat1);
-  show_matrix(sim);
-  drop_matrix(sim);
-  drop_matrix(mat1);
+  complex float arr[] = {5, 5, 5, 5};
+  MatrixT *matrix = new_matrix_from_array(2, 2, ROW, arr);
+  show_matrix(matrix);
+  log_info("=========================");
+  MatrixT **lu_res = decomposition_matrix_lu(matrix);
+
+  show_matrix(lu_res[0]);
+  log_info("=========================");
+  show_matrix(lu_res[1]);
+  log_info("=========================");
+
+  drop_matrix(matrix);
+  drop_matrices(lu_res, 2);
   return 0;
 }

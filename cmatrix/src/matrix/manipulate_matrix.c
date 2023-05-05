@@ -40,11 +40,11 @@ void show_matrix_with_precision(const MatrixT *matrix, uint8_t precision) {
     printf("[");
     for (size_t j = 1; j < matrix->size[1]; ++j) {
       complex float val = get_matrix_val(matrix, i, j);
-      printf("%*.*f%+.*f, ", precision * 2, precision, crealf(val), precision,
+      printf("%*.*f%+.*f I, ", precision * 2, precision, crealf(val), precision,
              cimagf(val));
     }
     complex float val = get_matrix_val(matrix, i, matrix->size[1]);
-    printf("%*.*f%+.*f]\n", precision * 2, precision, crealf(val), precision,
+    printf("%*.*f%+.*f I]\n", precision * 2, precision, crealf(val), precision,
            cimagf(val));
   }
   // print end flag

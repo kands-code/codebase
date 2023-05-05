@@ -10,12 +10,14 @@ int main(void) {
   MatrixT *matrix = new_matrix_from_array(3, 3, ROW, arr);
   show_matrix(matrix);
   log_info("=========================");
-  MatrixT *eigen = get_matrix_eigenvalue_qr(matrix, 50);
+  MatrixT **eigen = get_matrix_eigenvalue_qr(matrix, 50);
 
-  show_matrix(eigen);
+  show_matrix(eigen[0]);
+  log_info("=========================");
+  show_matrix(eigen[1]);
   log_info("=========================");
 
-  drop_matrix(eigen);
+  drop_matrices(eigen, 2);
   drop_matrix(matrix);
 
   return 0;

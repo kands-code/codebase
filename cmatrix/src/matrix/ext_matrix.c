@@ -266,12 +266,12 @@ MatrixT **decomposition_matrix_qr(const MatrixT *matrix) {
 
 /// @function: get_matrix_eigenvalue_qr (const MatrixT *,
 ///                                      size_t)
-///                                     -> MatrixT *
+///                                     -> MatrixT **
 /// @param: <matrix> the matrix to use
 /// @param: <max_iter> maximum iter times
-/// @return: a matrix contains the eigenvalue of the matrix
+/// @return: the eigen system of the matrix
 /// @info: use QR method to calculate eigenvalue of a matrix
-MatrixT *get_matrix_eigenvalue_qr(const MatrixT *matrix, size_t max_iter) {
+MatrixT **get_matrix_eigenvalue_qr(const MatrixT *matrix, size_t max_iter) {
   // boundary test: null pointer
   if (matrix == NULL) {
     log_error("panic: null pointer error at %s", __func__);
@@ -283,24 +283,30 @@ MatrixT *get_matrix_eigenvalue_qr(const MatrixT *matrix, size_t max_iter) {
               __func__, matrix->size[0], matrix->size[1]);
     exit(EXIT_FAILURE);
   }
+  // init: eigen system
+  MatrixT **eigen_system = calloc(2, sizeof(MatrixT *));
+  eigen_system[0] = copy_matrix(matrix);
+  eigen_system[1] = new_identity_matrix(matrix->size[0], matrix->size[1]);
   // start iter
-  MatrixT *matrix_A = copy_matrix(matrix);
   size_t iter = 0;
   while (iter < max_iter) {
-    if (is_upper_triangle(matrix_A)) {
+    if (is_upper_triangle(eigen_system[0])) {
       break;
     }
     // A_{n} = R_{n - 1} Q_{n - 1}
-    MatrixT **qr_res = decomposition_matrix_qr(matrix_A);
+    MatrixT **qr_res = decomposition_matrix_qr(eigen_system[0]);
     MatrixT *next_matrix_A = mul_matrix(qr_res[1], qr_res[0]);
-    drop_matrix(matrix_A);
+    MatrixT *next_matrix_Q = mul_matrix(qr_res[0], eigen_system[1]);
+    drop_matrix(eigen_system[1]);
+    eigen_system[1] = next_matrix_Q;
     drop_matrices(qr_res, 2);
-    matrix_A = next_matrix_A;
+    drop_matrix(eigen_system[0]);
+    eigen_system[0] = next_matrix_A;
     iter++;
   }
   // check iter times
   if (iter >= max_iter) {
     log_warn("warn: reach the max iter");
   }
-  return matrix_A;
+  return eigen_system;
 }

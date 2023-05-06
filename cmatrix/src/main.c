@@ -6,17 +6,24 @@
 #include <stdlib.h>
 
 int main(void) {
-  complex float arr1[] = {3, -3, 1};
-  complex float arr2[] = {4, 9, 2};
-  MatrixT *mat1 = new_matrix_from_array(3, 1, ROW, arr1);
-  MatrixT *mat2 = new_matrix_from_array(3, 1, ROW, arr2);
+  complex float arr[] = {1, 4, 7, 2, 5, 8};
+  MatrixT *mat = new_matrix_from_array(3, 2, ROW, arr);
 
-  MatrixT *kro = vector_cross_product_3d(mat1, mat2);
-  show_matrix(kro);
-  drop_matrix(kro);
+  MatrixT **qr = decomposition_matrix_qr(mat);
+  show_matrix(qr[0]);
+  show_matrix(qr[1]);
+  MatrixT *recheck1 = mul_matrix(qr[0], qr[1]);
+  show_matrix(recheck1);
+  drop_matrix(recheck1);
 
-  drop_matrix(mat2);
-  drop_matrix(mat1);
+  MatrixT *trans_q = transpose_matrix(qr[0]);
+  MatrixT *recheck2 = mul_matrix(trans_q, qr[0]);
+  drop_matrix(trans_q);
+  show_matrix(recheck2);
+  drop_matrix(recheck2);
+
+  drop_matrices(qr, 2);
+  drop_matrix(mat);
 
   return 0;
 }

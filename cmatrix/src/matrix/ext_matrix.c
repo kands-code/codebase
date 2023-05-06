@@ -183,12 +183,6 @@ MatrixT **decomposition_matrix_qr(const MatrixT *matrix) {
     log_error("panic: null pointer error at %s", __func__);
     exit(EXIT_FAILURE);
   }
-  // boundary tes: square matrix
-  if (matrix->size[0] != matrix->size[1]) {
-    log_error("panic: matrix must be squared at %s with size (%u, %u)",
-              __func__, matrix->size[0], matrix->size[1]);
-    exit(EXIT_FAILURE);
-  }
   uint8_t size = matrix->size[0];
   // init: result of QR decomposition
   MatrixT **qr_result = calloc(2, sizeof(MatrixT *));

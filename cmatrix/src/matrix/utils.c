@@ -45,12 +45,6 @@ static const char *ANSI_COLOR_RESET = "\x1b[0m";
 
 // functions: log
 
-/**
- * @brief print info logs
- *
- * @param[in] message the message to log
- * @param[in] ... the params of the message
- */
 void log_info(const char *message, ...) {
   // init: varying list of arguments
   va_list args;
@@ -65,12 +59,6 @@ void log_info(const char *message, ...) {
   va_end(args);
 }
 
-/**
- * @brief print warning logs
- *
- * @param[in] message the message to log
- * @param[in] ... the params of the message
- */
 void log_warn(const char *message, ...) {
   // init: varying list of arguments
   va_list args;
@@ -86,12 +74,6 @@ void log_warn(const char *message, ...) {
   va_end(args);
 }
 
-/**
- * @brief print error logs
- *
- * @param[in] message the message to log
- * @param[in] ... the params of the message
- */
 void log_error(const char *message, ...) {
   // init: varying list of arguments
   va_list args;
@@ -106,12 +88,6 @@ void log_error(const char *message, ...) {
   va_end(args);
 }
 
-/**
- * @brief check whether a value is zero
- *
- * @param[in] value the value to check
- * @return true for zero, or false
- */
 bool is_complex_zero(complex float value) {
   complex float abs_value = cabsf(value);
   float real = crealf(abs_value);

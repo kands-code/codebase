@@ -15,22 +15,11 @@
 
 // functions: manipulate
 
-/**
- * @brief  print the matrix with default precision
- *
- * @param[in] matrix the matrix to show
- */
 void show_matrix(const MatrixT *matrix) {
   // default precision: 4
   show_matrix_with_precision(matrix, 4);
 }
 
-/**
- * @brief print the matrix with a specific precision
- *
- * @param[in] matrix the matrix to show
- * @param[in] precision the precision to use
- */
 void show_matrix_with_precision(const MatrixT *matrix, uint8_t precision) {
   // boundary test: null pointer
   if (matrix == NULL) {
@@ -55,12 +44,6 @@ void show_matrix_with_precision(const MatrixT *matrix, uint8_t precision) {
   puts("<<matrix>>");
 }
 
-/**
- * @brief transpose a matrix
- *
- * @param[in] matrix the matrix to use
- * @return the transpose matrix of \p matrix
- */
 MatrixT *transpose_matrix(const MatrixT *matrix) {
   // boundary test: null pointer
   if (matrix == NULL) {
@@ -78,13 +61,6 @@ MatrixT *transpose_matrix(const MatrixT *matrix) {
   return transposed_matrix;
 }
 
-/**
- * @brief do scalar product with the scalar and a matrix
- *
- * @param[in] scalar the scalar to use
- * @param[in] matrix the matrix to use
- * @return the product with \p scalar and \p matrix
- */
 MatrixT *scalar_mul_matrix(complex float scalar, const MatrixT *matrix) {
   // boundary test: null pointer
   if (matrix == NULL) {
@@ -100,13 +76,6 @@ MatrixT *scalar_mul_matrix(complex float scalar, const MatrixT *matrix) {
   return prod_matrix;
 }
 
-/**
- * @brief do addition of two matrices
- *
- * @param lsm the left hand side matrix
- * @param rsm the right hand side matrix
- * @return the sum of the lhm and rhm
- */
 MatrixT *add_matrix(const MatrixT *lsm, const MatrixT *rsm) {
   // boundary test: null pointer
   if (lsm == NULL || rsm == NULL) {
@@ -130,13 +99,6 @@ MatrixT *add_matrix(const MatrixT *lsm, const MatrixT *rsm) {
   return sum_matrix;
 }
 
-/**
- * @brief do common inner product of two vectors
- *
- * @param[in] lhv the left hand side vector
- * @param[in] rhv the right hand side vector
- * @return the inner product of the \p lhv and \p rhv
- */
 complex float vector_inner_product(const MatrixT *lhv, const MatrixT *rhv) {
   // boundary test: null pointer
   if (lhv == NULL || rhv == NULL) {
@@ -161,13 +123,6 @@ complex float vector_inner_product(const MatrixT *lhv, const MatrixT *rhv) {
   return inner_prod;
 }
 
-/**
- * @brief do inner product of two vectors
- *
- * @param[in] lhv the left hand side vector
- * @param[in] rhv the right hand side vector
- * @return the inner product of the \p lhv and \p rhv
- */
 MatrixT *vector_col_row_product(const MatrixT *lhv, const MatrixT *rhv) {
   // boundary test: null pointer
   if (lhv == NULL || rhv == NULL) {
@@ -193,13 +148,6 @@ MatrixT *vector_col_row_product(const MatrixT *lhv, const MatrixT *rhv) {
   return inner_prod;
 }
 
-/**
- * @brief do cross product of two vectors
- *
- * @param[in] lhv the left hand side vector
- * @param[in] rhv the right hand side vector
- * @return the cross product of the \p lhv and \p rhv
- */
 MatrixT *vector_cross_product_3d(const MatrixT *lhv, const MatrixT *rhv) {
   // boundary test: null pointer
   if (lhv == NULL || rhv == NULL) {
@@ -231,13 +179,6 @@ MatrixT *vector_cross_product_3d(const MatrixT *lhv, const MatrixT *rhv) {
   return cross_prod;
 }
 
-/**
- * @brief do multiplication of two matrices
- *
- * @param[in] lhm the left hand side matrix
- * @param[in] rhm the right hand side matrix
- * @return the product of the \p lhm and \p rhm
- */
 MatrixT *mul_matrix(const MatrixT *lhm, const MatrixT *rhm) {
   // boundary test: null pointer
   if (lhm == NULL || rhm == NULL) {
@@ -268,13 +209,6 @@ MatrixT *mul_matrix(const MatrixT *lhm, const MatrixT *rhm) {
   return prod_matrix;
 }
 
-/**
- * @brief do tensor product of two matrices
- *
- * @param[in] lhm the left hand side matrix
- * @param[in] rhm the right hand side matrix
- * @return the tensor product of the \p lhm and \p rhm
- */
 MatrixT *tensor_product_matrix(const MatrixT *lhm, const MatrixT *rhm) {
   // boundary test: null pointer
   if (lhm == NULL || rhm == NULL) {

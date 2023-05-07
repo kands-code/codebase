@@ -62,6 +62,24 @@ extern MatrixT *new_matrix(uint8_t row, uint8_t col);
 extern MatrixT *new_identity_matrix(uint8_t row, uint8_t col);
 
 /**
+ * @brief construct a random real matrix
+ *
+ * @param[in] row the row size of matrix
+ * @param[in] col the col size of matrix
+ * @return the random matrix with size ( \p row, \p col )
+ */
+extern MatrixT *new_random_real_matrix(uint8_t row, uint8_t col);
+
+/**
+ * @brief construct a random matrix
+ *
+ * @param[in] row the row size of matrix
+ * @param[in] col the col size of matrix
+ * @return the random matrix with size ( \p row, \p col )
+ */
+extern MatrixT *new_random_matrix(uint8_t row, uint8_t col);
+
+/**
  * @brief construct an zero matrix from an array
  *
  * @param[in] row the row size of matrix
@@ -85,7 +103,7 @@ extern MatrixT **new_matrix_from_file(const char *file_path,
                                       size_t *matrix_number);
 
 /**
- * @brief save matrices to file filled by #ROW
+ * @brief save matrices to file filled by ROW
  *
  * @param[in] file_path the path to the file
  * @param[in] matrices the matrices to save

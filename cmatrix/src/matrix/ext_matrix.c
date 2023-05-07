@@ -1,5 +1,7 @@
-/// @file: matrix/ext_matrix.c
-/// @info: extension function of matrix library
+/**
+ * @file matrix/ext_matrix.c
+ * @brief extension function of matrix library
+ */
 
 // include
 
@@ -14,11 +16,12 @@
 
 // function: extensions
 
-/// @function: upper_triangularize_matrix (const MatrixT *)
-///                                    -> MatrixT **
-/// @param: <matrix> the matrix to decomposition
-/// @return: the result of LU decomposition of matrix
-/// @info: get the INVERSE Left matrix and Right matrix
+/**
+ * @brief triangularize a matrix
+ *
+ * @param[in] matrix the matrix to use
+ * @return the premutation matrix and triangularized \p matrix
+ */
 MatrixT **upper_triangularize_matrix(const MatrixT *matrix) {
   // boundary test: null pointer
   if (matrix == NULL) {
@@ -107,11 +110,12 @@ MatrixT **upper_triangularize_matrix(const MatrixT *matrix) {
   return lu_result;
 }
 
-/// @function: decomposition_matrix_lu (const MatrixT *)
-///                                    -> MatrixT **
-/// @param: <matrix> the matrix to decomposition
-/// @return: the result of LU decomposition of matrix
-/// @info: get the Left matrix and Right matrix
+/**
+ * @brief decompose a matrix with LU method
+ *
+ * @param[in] matrix the matrix to use
+ * @return the result of LU decomposition of \p matrix
+ */
 MatrixT **decomposition_matrix_lu(const MatrixT *matrix) {
   MatrixT **lu_result = upper_triangularize_matrix(matrix);
   MatrixT *left_matrix = get_inverse_matrix(lu_result[0]);
@@ -120,11 +124,12 @@ MatrixT **decomposition_matrix_lu(const MatrixT *matrix) {
   return lu_result;
 }
 
-/// @function: simplify_matrix (const MatrixT *)
-///                            -> MatrixT *
-/// @param: <matrix> the matrix to simplify
-/// @return: the simplified matrix
-/// @info: get the simplest form of the matrix
+/**
+ * @brief simplify a matrix
+ *
+ * @param[in] matrix the matrix to simplify
+ * @return simplified \p matrix
+ */
 MatrixT *simplify_matrix(const MatrixT *matrix) {
   MatrixT **lu_result = upper_triangularize_matrix(matrix);
   MatrixT *simplest_matrix = copy_matrix(lu_result[1]);
@@ -172,11 +177,12 @@ MatrixT *simplify_matrix(const MatrixT *matrix) {
   return simplest_matrix;
 }
 
-/// @function: decomposition_matrix_qr (const MatrixT *)
-///                                    -> MatrixT **
-/// @param: <matrix> the matrix to decomposition
-/// @return: the result of QR decomposition of matrix
-/// @info: apply QR decomposition on the matrix
+/**
+ * @brief decompose a matrix with QR method
+ *
+ * @param[in] matrix the matrix to use
+ * @return the result of QR decomposition of \p matrix
+ */
 MatrixT **decomposition_matrix_qr(const MatrixT *matrix) {
   // boundary test: null pointer
   if (matrix == NULL) {
@@ -258,14 +264,14 @@ MatrixT **decomposition_matrix_qr(const MatrixT *matrix) {
   return qr_result;
 }
 
-/// @function: get_matrix_eigenvalue_qr (const MatrixT *,
-///                                      size_t)
-///                                     -> MatrixT **
-/// @param: <matrix> the matrix to use
-/// @param: <max_iter> maximum iter times
-/// @return: the eigen system of the matrix
-/// @info: use QR method to calculate eigenvalue of a matrix
-MatrixT **get_matrix_eigenvalue_qr(const MatrixT *matrix, size_t max_iter) {
+/**
+ * @brief use QR method to calculate the eigen system of a matrix
+ *
+ * @param[in] matrix the matrix to use
+ * @param[in] max_iter maximum iter times
+ * @return the eigen system of \p matrix
+ */
+MatrixT **get_matrix_eigensystem_qr(const MatrixT *matrix, size_t max_iter) {
   // boundary test: null pointer
   if (matrix == NULL) {
     log_error("panic: null pointer error at %s", __func__);

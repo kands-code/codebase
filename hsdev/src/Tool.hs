@@ -1,4 +1,8 @@
-module Tool (fib) where
+module Tool (fib, fromMaybe) where
+
+fromMaybe :: a -> Maybe a -> a
+fromMaybe d Nothing = d
+fromMaybe _ (Just a) = a
 
 fib :: Int -> Maybe Integer
 fib n = fib' n 0 1

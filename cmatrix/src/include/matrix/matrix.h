@@ -1,5 +1,7 @@
-/// @file: matrix/matrix.h
-/// @info: main header file of matrix library
+/**
+ * @file matrix/matrix.h
+ * @brief main header file of matrix library
+ */
 
 #pragma once
 #include <stdbool.h>
@@ -14,302 +16,324 @@
 
 // types
 
-/// @type: MatrixT { uint8_t[2]; complex float * }
-/// @content: <size> size of matrix
-/// @content: <data> data of matrix
-/// @info: matrix type
+/**
+ * @brief matrix type
+ */
 typedef struct MatrixT {
-  uint8_t size[2];
-  complex float *data;
+  uint8_t size[2];     ///< size of matrix
+  complex float *data; ///< data of matrix
 } MatrixT;
 
-/// @type: MatrixOrientation = ROW | COLUMN
-/// @info: the orientation which is used to init the matrix
+/**
+ * @brief the orientation which is used to init the matrix
+ */
 typedef enum MatrixOrientation {
-  ROW = 0,
-  COLUMN = 1,
+  ROW = 0,    ///< row orientation
+  COLUMN = 1, ///< column orientation
 } MatrixOrientation;
 
 // functions: init
 
-/// @function: new_complex (float, float)
-///                        -> complex float
-/// @param: <real> the real part of the complex number
-/// @param: <imag> the imagine part of  the complex number
-/// @return: the complex number
-/// @info: construct a complex number with float type
-extern complex float new_complex(float x, float y);
+/**
+ * @brief construct a complex number
+ *
+ * @param[in] real the real part of the complex number
+ * @param[in] imag the imagine part of  the complex number
+ * @return the complex number
+ */
+extern complex float new_complex(float real, float imag);
 
-/// @function: new_matrix (uint8_t, uint8_t)
-///                       -> MatrixT *
-/// @param: <row> the row size of matrix
-/// @param: <col> the column size of matrix
-/// @return: the matrix with size (row, col) filled with zero
-/// @info: construct an zero matrix with size (row, col)
+/**
+ * @brief construct an zero matrix
+ *
+ * @param[in] row the row size of matrix
+ * @param[in] col the column size of matrix
+ * @return the matrix with size ( \p row, \p col ) filled with zero
+ */
 extern MatrixT *new_matrix(uint8_t row, uint8_t col);
 
-/// @function: new_identity_matrix (uint8_t, uint8_t)
-///                                -> MatrixT *
-/// @param: <row> the row size of matrix
-/// @param: <col> the column size of matrix
-/// @return: the identity matrix with size (row, col)
-/// @info: construct an identity matrix with size (row, col)
+/**
+ * @brief construct an identity matrix
+ *
+ * @param[in] row the row size of matrix
+ * @param[in] col the column size of matrix
+ * @return the identity matrix with size ( \p row, \p col )
+ */
 extern MatrixT *new_identity_matrix(uint8_t row, uint8_t col);
 
-/// @function: new_matrix_from_array (uint8_t, uint8_t,
-///                                   MatrixOrientation,
-///                                   const complexfloat *)
-///                                  -> MatrixT *
-/// @param: <row> the row size of matrix
-/// @param: <col> the column size of matrix
-/// @param: <orientation> the orientation which is used
-/// @param: <array> the array to use (must longer or equal than row * col)
-/// @return: the matrix with size (row, col) filled by the array
-/// @info: construct an zero matrix with size (row, col)
+/**
+ * @brief construct an zero matrix from an array
+ *
+ * @param[in] row the row size of matrix
+ * @param[in] col the column size of matrix
+ * @param[in] orientation the orientation which is used
+ * @param[in] array the array to use ( len( \p array ) <= \p row * \p col )
+ * @return he matrix with size ( \p row, \p col) filled by \p array
+ */
 extern MatrixT *new_matrix_from_array(uint8_t row, uint8_t col,
                                       MatrixOrientation orientation,
                                       const complex float *array);
 
-/// @function: new_matrix_from_file (const char *,
-///                                  size_t *)
-///                                 -> Matrix **
-/// @param: <file_path> the path to the file
-/// @param: <matrix_number> number of matrix to read
-/// @return: matrices from file
-/// @info: read matrices from file
+/**
+ * @brief read matrices from file
+ *
+ * @param[in] file_path the path to the file
+ * @param[in] matrix_number number of matrix to read
+ * @return matrices from file
+ */
 extern MatrixT **new_matrix_from_file(const char *file_path,
                                       size_t *matrix_number);
 
-/// @function: new_matrix_from_file (const char *, Matrix **,
-///                                  size_t)
-///                                 -> unit
-/// @param: <file_path> the path to the file
-/// @param: <matrices> the matrices to save
-/// @param: <matrix_number> number of matrix to save
-/// @info: save matrices to file filled by row
+/**
+ * @brief save matrices to file filled by #ROW
+ *
+ * @param[in] file_path the path to the file
+ * @param[in] matrices the matrices to save
+ * @param[in] matrix_number number of matrix to save
+ */
 extern void save_matrix_to_file(const char *file_path, MatrixT **matrices,
                                 size_t matrix_number);
 
-/// @function: copy_matrix (const MatrixT *)
-///                        -> MatrixT *
-/// @param: <matrix> the original matrix
-/// @return: the copy of the original matrix
-/// @info: copy a matrix
+/**
+ * @brief copy a matrix
+ *
+ * @param[in] matrix the original matrix
+ * @return the copy of the original matrix
+ */
 extern MatrixT *copy_matrix(const MatrixT *matrix);
 
-/// @function: drop_matrix (MatrixT *)
-///                        -> unit
-/// @param: <matrix> the matrix to drop
-/// @info: delete a matrix
+/**
+ * @brief delete a matrix
+ *
+ * @param[in] matrix the matrix to drop
+ */
 extern void drop_matrix(MatrixT *matrix);
 
-/// @function: drop_matrices (Matrix **, size_t)
-///                          -> unit
-/// @param: <matrices> matrices to drop
-/// @param: <matrices_number> number of matrices to drop
-/// @info: delete matrices at one time
+/**
+ * @brief delete matrices at one time
+ * @param[in] matrices matrices to drop
+ * @param[in] matrices_number number of matrices to drop
+ */
 extern void drop_matrices(MatrixT **matrices, size_t matrices_number);
 
 // functions: attribute
 
-/// @function: get_matrix_val (const MatrixT *, uint8_t,
-///                            uint8_t)
-///                           -> complex float
-/// @param: <matrix> the matrix to use
-/// @param: <row> the row position of value
-/// @param: <col> the column position of value
-/// @return: the value at (row, col) of the matrix
-/// @info: get value at the specific position of a matrix
+/**
+ * @brief get value at the specific position of a matrix
+ *
+ * @param[in] matrix the matrix to use
+ * @param[in] row the row position of value
+ * @param[in] col the column position of value
+ * @return the value at (row, col) of the matrix
+ */
 extern complex float get_matrix_val(const MatrixT *matrix, uint8_t row,
                                     uint8_t col);
 
-/// @function: set_matrix_val (MatrixT *, uint8_t, uint8_t,
-///                            complex float)
-///                           -> unit
-/// @param: <matrix> the matrix to modify
-/// @param: <row> the row position of value
-/// @param: <col> the column position of value
-/// @param: <val> the value to use
-/// @return: the value at (row, col) of the matrix
-/// @info: set the value at the specific position of a matrix
+/**
+ * @brief set the value at the specific position of a matrix
+ *
+ * @param[in] matrix the matrix to modify
+ * @param[in] row the row position of value
+ * @param[in] col the column position of value
+ * @param[in] val the value to use
+ */
 extern void set_matrix_val(MatrixT *matrix, uint8_t row, uint8_t col,
                            complex float val);
 
-/// @function: get_matrix_row (const MatrixT *, uint8_t)
-///                           -> MatrixT *
-/// @param: <matrix> the matrix to use
-/// @param: <row> the row to get
-/// @return: the row vector of the matrix
-/// @info: get the row of a matrix
+/**
+ * @brief get the row of a matrix
+ *
+ * @param[in] matrix the matrix to use
+ * @param[in] row the row to get
+ * @return the row vector of \p matrix
+ */
 extern MatrixT *get_matrix_row(const MatrixT *matrix, uint8_t row);
 
-/// @function: get_matrix_row (const MatrixT *, uint8_t)
-///                           -> MatrixT *
-/// @param: <matrix> the matrix to use
-/// @param: <col> the column to get
-/// @return: the column vector of the matrix
-/// @info: get the column of a matrix
+/**
+ * @brief get the column of a matrix
+ *
+ * @param[in] matrix the matrix to use
+ * @param[in] col the column to get
+ * @return the column vector of \p matrix
+ */
 extern MatrixT *get_matrix_col(const MatrixT *matrix, uint8_t col);
 
-/// @function: is_upper_triangle (const MatrixT *)
-///                              -> bool
-/// @param: <matrix> the matrix to check
-/// @return: if can be regarded as upper matrix, return true, or false
-/// @info: check a matrix whether a upper matrix
+/**
+ * @brief check a matrix whether a upper matrix
+ *
+ * @param[in] matrix the matrix to check
+ * @return if can be regarded as upper matrix, return true, or false
+ */
 extern bool is_upper_triangle(const MatrixT *matrix);
 
-/// @function: get_matrix_trace (const MatrixT *)
-///                             -> complex float
-/// @param: <matrix> the matrix to use
-/// @return: the trace of the matrix
-/// @info: get the trace of matrix
+/**
+ * @brief get the trace of matrix
+ *
+ * @param[in] matrix the matrix to use
+ * @return the trace of \p matrix
+ */
 extern complex float get_matrix_trace(const MatrixT *matrix);
 
-/// @function: get_matrix_frobenius_norm (const MatrixT *)
-///                                      -> complex float
-/// @param: <matrix> the matrix to use
-/// @return: the Frobenius Norm
-/// @info: get the Frobenius Norm of a matrix
+/**
+ * @brief get the Frobenius Norm of a matrix
+ *
+ * @param[in] matrix the matrix to use
+ * @return the Frobenius Norm
+ */
 extern complex float get_matrix_frobenius_norm(const MatrixT *matrix);
 
-/// @function: get_matrix_rank (const MatrixT *)
-///                            -> uint8_t
-/// @param: <matrix> the matrix to use
-/// @return: the rank of the matrix
-/// @info: get the matrix rank
+/**
+ * @brief get the matrix rank
+ *
+ * @param[in] matrix the matrix to use
+ * @return the rank of \p matrix
+ */
 extern uint8_t get_matrix_rank(const MatrixT *matrix);
 
-/// @function: get_submatrix (const MatrixT *, uint8_t, uint8_t)
-///                          -> MatrixT *
-/// @param: <matrix> the matrix to use
-/// @param: <row> the row to omit
-/// @param: <col> the col to omit
-/// @return: the submatrix of matrix
-/// @info: get the submatrix of a matrix
+/**
+ * @brief get the submatrix of a matrix
+ *
+ * @param[in] matrix the matrix to use
+ * @param[in] row the row to omit
+ * @param[in] col the col to omit
+ * @return the submatrix of \p matrix
+ */
 extern MatrixT *get_submatrix(const MatrixT *matrix, uint8_t row, uint8_t col);
 
-/// @function: get_matrix_cofactor (const MatrixT *, uint8_t,
-///                                 uint8_t)
-///                                -> complex float
-/// @param: <matrix> the matrix to use
-/// @param: <row> the row to omit
-/// @param: <col> the col to omit
-/// @return: the cofacter of the matrix
-/// @info: get the cofactor of a matrix
+/**
+ * @brief get the cofactor of a matrix
+ *
+ * @param[in] matrix the matrix to use
+ * @param[in] row the row to omit
+ * @param[in] col the col to omit
+ * @return the cofacter of \p matrix
+ */
 extern complex float get_matrix_cofactor(const MatrixT *matrix, uint8_t row,
                                          uint8_t col);
 
-/// @function: get_matrix_algebraic_cofactor (const MatrixT *, uint8_t,
-///                                           uint8_t)
-///                                          -> complex float
-/// @param: <matrix> the matrix to use
-/// @param: <row> the row to omit
-/// @param: <col> the col to omit
-/// @return: the algebraic cofacter of the matrix
-/// @info: get the algebraic cofactor of a matrix
+/**
+ * @brief get the algebraic cofactor of a matrix
+ *
+ * @param[in] matrix the matrix to use
+ * @param[in] row the row to omit
+ * @param[in] col the col to omit
+ * @return the algebraic cofacter of \p matrix
+ */
 extern complex float get_matrix_algebraic_cofactor(const MatrixT *matrix,
                                                    uint8_t row, uint8_t col);
 
-/// @function: get_matrix_determinant (const MatrixT *)
-///                                   -> complex float
-/// @param: <matrix> the matrix to use
-/// @return: the determinant of the matrix
-/// @info: calculate the determinant of a matrix
+/**
+ * @brief calculate the determinant of a matrix
+ *
+ * @param[in] matrix the matrix to use
+ * @return the determinant of \p matrix
+ */
 extern complex float get_matrix_determinant(const MatrixT *matrix);
 
-/// @function: get_adjoint_matrix (const MatrixT *)
-///                               -> MatrixT *
-/// @param: the matrix to use
-/// @return: the adjoint matrix of the matrix
-/// @info: get the adjoint matrix of a matrix
+/**
+ * @brief get the adjoint matrix of a matrix
+ *
+ * @param[in] matrix the matrix to use
+ * @return the adjoint matrix of \p matrix
+ */
 extern MatrixT *get_adjoint_matrix(const MatrixT *matrix);
 
-/// @function: get_inverse_matrix (const MatrixT *)
-///                               -> MatrixT *
-/// @param: <matrix> matrix to use
-/// @return: the inverse matrix
-/// @info: get the inverse matrix of a matrix
+/**
+ * @brief get the inverse matrix of a matrix
+ *
+ * @param[in] matrix matrix to use
+ * @return the inverse matrix of \p matrix
+ */
 extern MatrixT *get_inverse_matrix(const MatrixT *matrix);
 
 // functions: manipulate
 
-/// @function: show_matrix (const MatrixT *)
-///                        -> unit
-/// @param: <matrix> the matrix to show
-/// @info: print the matrix with default precision
+/**
+ * @brief  print the matrix with default precision
+ *
+ * @param[in] matrix the matrix to show
+ */
 extern void show_matrix(const MatrixT *matrix);
 
-/// @function: show_matrix (const MatrixT *,
-///                         uint8_t)
-///                        -> unit
-/// @param: <matrix> the matrix to show
-/// @param: <precision> the precision to use
-/// @info: print the matrix with a specific precision
+/**
+ * @brief print the matrix with a specific precision
+ *
+ * @param[in] matrix the matrix to show
+ * @param[in] precision the precision to use
+ */
 extern void show_matrix_with_precision(const MatrixT *matrix,
                                        uint8_t precision);
 
-/// @function: transpose_matrix (const MatrixT *)
-///                             -> MatrixT *
-/// @param: <matrix> the matrix to use
-/// @return: the transposed matrix
-/// @info: transpose a matrix
+/**
+ * @brief transpose a matrix
+ *
+ * @param[in] matrix the matrix to use
+ * @return the transpose matrix of \p matrix
+ */
 extern MatrixT *transpose_matrix(const MatrixT *matrix);
 
-/// @function: scalar_mul_matrix (complex float, const MatrixT *)
-///                              -> MatrixT *
-/// @param: <scalar> the scalar to use
-/// @param: <matrix> the matrix to use
-/// @return: the product of scalar and matrix
-/// @info: do scalar product with the scalar and the matrix
+/**
+ * @brief do scalar product with the scalar and a matrix
+ *
+ * @param[in] scalar the scalar to use
+ * @param[in] matrix the matrix to use
+ * @return the product with \p scalar and \p matrix
+ */
 extern MatrixT *scalar_mul_matrix(complex float scalar, const MatrixT *matrix);
 
-/// @function: add_matrix (const MatrixT *, const MatrixT *)
-///                       -> MatrixT *
-/// @param: <lhm> the left hand side matrix
-/// @param: <rhm> the right hand side matrix
-/// @return: the sum of the two matrices
-/// @info: do addition of two matrices
-extern MatrixT *add_matrix(const MatrixT *lhm, const MatrixT *rhm);
+/**
+ * @brief do addition of two matrices
+ *
+ * @param[in] lsm the left hand side matrix
+ * @param[in] rsm the right hand side matrix
+ * @return the sum of the lhm and rhm
+ */
+extern MatrixT *add_matrix(const MatrixT *lsm, const MatrixT *rsm);
 
-/// @function: vector_inner_product (const MatrixT *, const MatrixT *)
-///                                 -> complex float
-/// @param: <lhv> the left hand side vector
-/// @param: <rhv> the right hand side vector
-/// @return: the inner product of the two vectors
-/// @info: do common inner product of two vectors
+/**
+ * @brief do common inner product of two vectors
+ *
+ * @param[in] lhv the left hand side vector
+ * @param[in] rhv the right hand side vector
+ * @return the inner product of the \p lhv and \p rhv
+ */
 extern complex float vector_inner_product(const MatrixT *lhv,
                                           const MatrixT *rhv);
 
-/// @function: vector_col_row_product (const MatrixT *, const MatrixT *)
-///                                   -> MatrixT *
-/// @param: <lhv> the left hand side vector (column vector)
-/// @param: <rhv> the right hand side vector (row vector)
-/// @return: the inner product of the two vectors
-/// @info: do inner product of two vectors
+/**
+ * @brief do inner product of two vectors
+ *
+ * @param[in] lhv the left hand side vector
+ * @param[in] rhv the right hand side vector
+ * @return the inner product of the \p lhv and \p rhv
+ */
 extern MatrixT *vector_col_row_product(const MatrixT *lhv, const MatrixT *rhv);
 
-/// @function: vector_cross_product_3d (const MatrixT *, const MatrixT *)
-///                                    -> MatrixT *
-/// @param: <lhv> the left hand side vector (column vector)
-/// @param: <rhv> the right hand side vector (row vector)
-/// @return: the cross product of the two vectors
-/// @info: do cross product of two vectors
+/**
+ * @brief do cross product of two vectors
+ *
+ * @param[in] lhv the left hand side vector
+ * @param[in] rhv the right hand side vector
+ * @return the cross product of the \p lhv and \p rhv
+ */
 extern MatrixT *vector_cross_product_3d(const MatrixT *lhv, const MatrixT *rhv);
 
-/// @function: mul_matrix (const MatrixT *, const MatrixT *)
-///                       -> MatrixT *
-/// @param: <lhm> the left hand side matrix
-/// @param: <rhm> the right hand side matrix
-/// @return: the product of the two matrices
-/// @info: do product of two matrices
+/**
+ * @brief do multiplication of two matrices
+ *
+ * @param[in] lhm the left hand side matrix
+ * @param[in] rhm the right hand side matrix
+ * @return the product of the \p lhm and \p rhm
+ */
 extern MatrixT *mul_matrix(const MatrixT *lhm, const MatrixT *rhm);
 
-/// @function: tensor_product_matrix (const MatrixT *, const MatrixT *)
-///                                  -> MatrixT *
-/// @param: <lhm> the left hand side matrix
-/// @param: <rhm> the right hand side matrix
-/// @return: the tensor product of the two matrices
-/// @info: do tensor product of two matrices
+/**
+ * @brief do tensor product of two matrices
+ *
+ * @param[in] lhm the left hand side matrix
+ * @param[in] rhm the right hand side matrix
+ * @return the tensor product of the \p lhm and \p rhm
+ */
 extern MatrixT *tensor_product_matrix(const MatrixT *lhm, const MatrixT *rhm);
 
 #endif

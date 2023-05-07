@@ -1,5 +1,7 @@
-/// @file: matrix/utils.c
-/// @info: some utilities for matrix library
+/**
+ * @file matrix/utils.c
+ * @brief some utilities for matrix library
+ */
 
 // include
 
@@ -13,23 +15,42 @@
 
 // constants: ANSI color control sequences
 
-/// @constant: color of red
+/**
+ * \def ANSI_COLOR_RED
+ *
+ * color of red
+ */
 static const char *ANSI_COLOR_RED = "\x1b[31m";
 
-/// @constant: color of yellow
+/**
+ * \def ANSI_COLOR_YELLOW
+ *
+ * color of yellow
+ */
 static const char *ANSI_COLOR_YELLOW = "\x1b[33m";
 
-/// @constant: color of blue
+/**
+ * \def ANSI_COLOR_BLUE
+ *
+ * color of blue
+ */
 static const char *ANSI_COLOR_BLUE = "\x1b[34m";
 
-/// @constant: reset color
+/**
+ * \def ANSI_COLOR_RESET
+ *
+ * reset color
+ */
 static const char *ANSI_COLOR_RESET = "\x1b[0m";
 
 // functions: log
 
-/// @function: log_info (const char *, ...)
-///                     -> stderr
-/// @info: print info logs
+/**
+ * @brief print info logs
+ *
+ * @param[in] message the message to log
+ * @param[in] ... the params of the message
+ */
 void log_info(const char *message, ...) {
   // init: varying list of arguments
   va_list args;
@@ -44,9 +65,12 @@ void log_info(const char *message, ...) {
   va_end(args);
 }
 
-/// @function: log_warn (const char *, ...)
-///                     -> stderr
-/// @info: print warning logs
+/**
+ * @brief print warning logs
+ *
+ * @param[in] message the message to log
+ * @param[in] ... the params of the message
+ */
 void log_warn(const char *message, ...) {
   // init: varying list of arguments
   va_list args;
@@ -62,9 +86,12 @@ void log_warn(const char *message, ...) {
   va_end(args);
 }
 
-/// @function: log_error (const char *, ...)
-///                      -> stderr
-/// @info: print error logs
+/**
+ * @brief print error logs
+ *
+ * @param[in] message the message to log
+ * @param[in] ... the params of the message
+ */
 void log_error(const char *message, ...) {
   // init: varying list of arguments
   va_list args;
@@ -79,11 +106,12 @@ void log_error(const char *message, ...) {
   va_end(args);
 }
 
-/// @function: is_complex_zero (complex float)
-///                            -> bool
-/// @param: <value> the value to check
-/// @return: if the value is zero, return true, or false
-/// @info: check whether a value is zero
+/**
+ * @brief check whether a value is zero
+ *
+ * @param[in] value the value to check
+ * @return true for zero, or false
+ */
 bool is_complex_zero(complex float value) {
   complex float abs_value = cabsf(value);
   float real = crealf(abs_value);

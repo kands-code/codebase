@@ -1,5 +1,7 @@
-/// @file: matrix/attribute_matrix.c
-/// @info: get attributes of matrices
+/**
+ * @file matrix/attribute_matrix.c
+ * @brief get attributes of matrices
+ */
 
 // include
 
@@ -16,14 +18,14 @@
 
 // functions: attribute
 
-/// @function: get_matrix_val (const MatrixT *, uint8_t,
-///                            uint8_t)
-///                           -> complex float
-/// @param: <matrix> the matrix to use
-/// @param: <row> the row position of value
-/// @param: <col> the column position of value
-/// @return: the value at (row, col) of the matrix
-/// @info: get value at the specific position of a matrix
+/**
+ * @brief get value at the specific position of a matrix
+ *
+ * @param[in] matrix the matrix to use
+ * @param[in] row the row position of value
+ * @param[in] col the column position of value
+ * @return the value at (row, col) of the matrix
+ */
 complex float get_matrix_val(const MatrixT *matrix, uint8_t row, uint8_t col) {
   // boundary test: null pointer
   if (matrix == NULL) {
@@ -39,15 +41,14 @@ complex float get_matrix_val(const MatrixT *matrix, uint8_t row, uint8_t col) {
   return matrix->data[(row - 1) * matrix->size[1] + col - 1];
 }
 
-/// @function: set_matrix_val: (MatrixT *, uint8_t, uint8_t,
-///                             complex float)
-///                            -> unit
-/// @param: <matrix> the matrix to modify
-/// @param: <row> the row position of value
-/// @param: <col> the column position of value
-/// @param: <val> the value to use
-/// @return: the value at (row, col) of the matrix
-/// @info: set the value at the specific position of a matrix
+/**
+ * @brief set the value at the specific position of a matrix
+ *
+ * @param[in] matrix the matrix to modify
+ * @param[in] row the row position of value
+ * @param[in] col the column position of value
+ * @param[in] val the value to use
+ */
 void set_matrix_val(MatrixT *matrix, uint8_t row, uint8_t col,
                     complex float val) {
   // boundary test: null pointer
@@ -65,12 +66,13 @@ void set_matrix_val(MatrixT *matrix, uint8_t row, uint8_t col,
   matrix->data[(row - 1) * matrix->size[1] + col - 1] = val;
 }
 
-/// @function: get_matrix_row (const MatrixT *, uint8_t)
-///                           -> MatrixT *
-/// @param: <matrix> the matrix to use
-/// @param: <row> the row to get
-/// @return: the row vector of the matrix
-/// @info: get the row of a matrix
+/**
+ * @brief get the row of a matrix
+ *
+ * @param[in] matrix the matrix to use
+ * @param[in] row the row to get
+ * @return the row vector of \p matrix
+ */
 MatrixT *get_matrix_row(const MatrixT *matrix, uint8_t row) {
   // boundary test: null pointer
   if (matrix == NULL) {
@@ -92,12 +94,13 @@ MatrixT *get_matrix_row(const MatrixT *matrix, uint8_t row) {
   return row_vector;
 }
 
-/// @function: get_matrix_row (const MatrixT *, uint8_t)
-///                           -> MatrixT *
-/// @param: <matrix> the matrix to use
-/// @param: <col> the column to get
-/// @return: the column vector of the matrix
-/// @info: get the column of a matrix
+/**
+ * @brief get the column of a matrix
+ *
+ * @param[in] matrix the matrix to use
+ * @param[in] col the column to get
+ * @return the column vector of \p matrix
+ */
 MatrixT *get_matrix_col(const MatrixT *matrix, uint8_t col) {
   // boundary test: null pointer
   if (matrix == NULL) {
@@ -119,11 +122,12 @@ MatrixT *get_matrix_col(const MatrixT *matrix, uint8_t col) {
   return col_vector;
 }
 
-/// @function: is_upper_triangle (const MatrixT *)
-///                              -> bool
-/// @param: <matrix> the matrix to check
-/// @return: if can be regarded as upper matrix, return true, or false
-/// @info: check a matrix whether a upper matrix
+/**
+ * @brief check a matrix whether a upper matrix
+ *
+ * @param[in] matrix the matrix to check
+ * @return if can be regarded as upper matrix, return true, or false
+ */
 bool is_upper_triangle(const MatrixT *matrix) {
   // boundary test: null pointer
   if (matrix == NULL) {
@@ -151,11 +155,12 @@ bool is_upper_triangle(const MatrixT *matrix) {
   return true;
 }
 
-/// @function: get_matrix_trace (const MatrixT *)
-///                             -> complex float
-/// @param: <matrix> the matrix to use
-/// @return: the trace of the matrix
-/// @info: get the trace of matrix
+/**
+ * @brief get the trace of matrix
+ *
+ * @param[in] matrix the matrix to use
+ * @return the trace of \p matrix
+ */
 complex float get_matrix_trace(const MatrixT *matrix) {
   // boundary test: null pointer
   if (matrix == NULL) {
@@ -177,11 +182,12 @@ complex float get_matrix_trace(const MatrixT *matrix) {
   return trace_value;
 }
 
-/// @function: get_matrix_frobenius_norm (const MatrixT *)
-///                                      -> complex float
-/// @param: <matrix> the matrix to use
-/// @return: the Frobenius Norm
-/// @info: get the Frobenius Norm of a matrix
+/**
+ * @brief get the Frobenius Norm of a matrix
+ *
+ * @param[in] matrix the matrix to use
+ * @return the Frobenius Norm
+ */
 complex float get_matrix_frobenius_norm(const MatrixT *matrix) {
   // boundary test: null pointer
   if (matrix == NULL) {
@@ -197,11 +203,12 @@ complex float get_matrix_frobenius_norm(const MatrixT *matrix) {
   return csqrtf(frobenius_norm);
 }
 
-/// @function: get_matrix_rank (const MatrixT *)
-///                            -> uint8_t
-/// @param: <matrix> the matrix to use
-/// @return: the rank of the matrix
-/// @info: get the matrix rank
+/**
+ * @brief get the matrix rank
+ *
+ * @param[in] matrix the matrix to use
+ * @return the rank of \p matrix
+ */
 uint8_t get_matrix_rank(const MatrixT *matrix) {
   // simplify the matrix
   MatrixT *simplest_matrix = simplify_matrix(matrix);
@@ -225,13 +232,14 @@ uint8_t get_matrix_rank(const MatrixT *matrix) {
   return iter - 1;
 }
 
-/// @function: get_submatrix (const MatrixT *, uint8_t, uint8_t)
-///                          -> MatrixT *
-/// @param: <matrix> the matrix to use
-/// @param: <row> the row to omit
-/// @param: <col> the col to omit
-/// @return: the submatrix of matrix
-/// @info: get the submatrix of a matrix
+/**
+ * @brief get the submatrix of a matrix
+ *
+ * @param[in] matrix the matrix to use
+ * @param[in] row the row to omit
+ * @param[in] col the col to omit
+ * @return the submatrix of \p matrix
+ */
 MatrixT *get_submatrix(const MatrixT *matrix, uint8_t row, uint8_t col) {
   // boundary test: null pointer
   if (matrix == NULL) {
@@ -270,14 +278,14 @@ MatrixT *get_submatrix(const MatrixT *matrix, uint8_t row, uint8_t col) {
   return submatrix;
 }
 
-/// @function: get_matrix_cofactor (const MatrixT *, uint8_t,
-///                                 uint8_t)
-///                                -> complex float
-/// @param: <matrix> the matrix to use
-/// @param: <row> the row to omit
-/// @param: <col> the col to omit
-/// @return: the cofacter of the matrix
-/// @info: get the cofactor of a matrix
+/**
+ * @brief get the cofactor of a matrix
+ *
+ * @param[in] matrix the matrix to use
+ * @param[in] row the row to omit
+ * @param[in] col the col to omit
+ * @return the cofacter of \p matrix
+ */
 complex float get_matrix_cofactor(const MatrixT *matrix, uint8_t row,
                                   uint8_t col) {
   // cofactor(r, c) = det(sub(A, r, c))
@@ -287,25 +295,26 @@ complex float get_matrix_cofactor(const MatrixT *matrix, uint8_t row,
   return cofacter;
 }
 
-/// @function: get_matrix_algebraic_cofactor (const MatrixT *, uint8_t,
-///                                           uint8_t)
-///                                          -> complex float
-/// @param: <matrix> the matrix to use
-/// @param: <row> the row to omit
-/// @param: <col> the col to omit
-/// @return: the algebraic cofacter of the matrix
-/// @info: get the algebraic cofactor of a matrix
+/**
+ * @brief get the algebraic cofactor of a matrix
+ *
+ * @param[in] matrix the matrix to use
+ * @param[in] row the row to omit
+ * @param[in] col the col to omit
+ * @return the algebraic cofacter of \p matrix
+ */
 complex float get_matrix_algebraic_cofactor(const MatrixT *matrix, uint8_t row,
                                             uint8_t col) {
   complex float cofacter = get_matrix_cofactor(matrix, row, col);
   return IS_ODD(row + col) ? (-cofacter) : cofacter;
 }
 
-/// @function: get_matrix_determinant (const MatrixT *)
-///                                   -> complex float
-/// @param: <matrix> the matrix to use
-/// @return: the determinant of the matrix
-/// @info: calculate the determinant of a matrix
+/**
+ * @brief calculate the determinant of a matrix
+ *
+ * @param[in] matrix the matrix to use
+ * @return the determinant of \p matrix
+ */
 complex float get_matrix_determinant(const MatrixT *matrix) {
   // boundary test: null pointer
   if (matrix == NULL) {
@@ -327,11 +336,12 @@ complex float get_matrix_determinant(const MatrixT *matrix) {
   return determinant;
 }
 
-/// @function: get_adjoint_matrix (const MatrixT *)
-///                               -> MatrixT *
-/// @param: the matrix to use
-/// @return: the adjoint matrix of the matrix
-/// @info: get the adjoint matrix of a matrix
+/**
+ * @brief get the adjoint matrix of a matrix
+ *
+ * @param[in] matrix the matrix to use
+ * @return the adjoint matrix of \p matrix
+ */
 MatrixT *get_adjoint_matrix(const MatrixT *matrix) {
   // init: adjoint matrix
   MatrixT *adjoint_matrix = new_matrix(matrix->size[1], matrix->size[0]);
@@ -346,11 +356,12 @@ MatrixT *get_adjoint_matrix(const MatrixT *matrix) {
   return adjoint_matrix;
 }
 
-/// @function: get_inverse_matrix (const MatrixT *)
-///                               -> MatrixT *
-/// @param: <matrix> matrix to use
-/// @return: the inverse matrix
-/// @info: get the inverse matrix of a matrix
+/**
+ * @brief get the inverse matrix of a matrix
+ *
+ * @param[in] matrix matrix to use
+ * @return the inverse matrix of \p matrix
+ */
 MatrixT *get_inverse_matrix(const MatrixT *matrix) {
   // inv(A) = adj(A) / det(A)
   complex float determinant = get_matrix_determinant(matrix);

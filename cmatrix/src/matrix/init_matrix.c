@@ -1,5 +1,7 @@
-/// @file: matrix/init_matrix.c
-/// @info: init or delete a matrix
+/**
+ * @file  matrix/init_matrix.c
+ * @brief init or delete a matrix
+ */
 
 // inlcude
 
@@ -16,23 +18,25 @@
 
 // functions: init
 
-/// @function: new_complex (float, float)
-///                        -> complex float
-/// @param: <real> the real part of the complex number
-/// @param: <imag> the imagine part of  the complex number
-/// @return: the complex number
-/// @info: construct a complex number with float type
-complex float new_complex(float x, float y) {
+/**
+ * @brief construct a complex number
+ *
+ * @param[in] real the real part of the complex number
+ * @param[in] imag the imagine part of  the complex number
+ * @return the complex number
+ */
+complex float new_complex(float real, float imag) {
   // return: complex number
-  return __builtin_complex(x, y);
+  return __builtin_complex(real, imag);
 }
 
-/// @function: new_matrix (uint8_t, uint8_t)
-///                       -> MatrixT *
-/// @param: <row> the row size of matrix
-/// @param: <col> the column size of matrix
-/// @return: the matrix with size (row, col) filled with zero
-/// @info: construct an zero matrix with size (row, col)
+/**
+ * @brief construct an zero matrix
+ *
+ * @param[in] row the row size of matrix
+ * @param[in] col the column size of matrix
+ * @return the matrix with size ( \p row, \p col ) filled with zero
+ */
 MatrixT *new_matrix(uint8_t row, uint8_t col) {
   // boundary test: size
   if (row == 0 || col == 0) {
@@ -54,12 +58,13 @@ MatrixT *new_matrix(uint8_t row, uint8_t col) {
   return matrix;
 }
 
-/// @function: new_identity_matrix (uint8_t, uint8_t)
-///                                -> MatrixT *
-/// @param: <row> the row size of matrix
-/// @param: <col> the column size of matrix
-/// @return: the identity matrix with size (row, col)
-/// @info: construct an identity matrix with size (row, col)
+/**
+ * @brief construct an identity matrix
+ *
+ * @param[in] row the row size of matrix
+ * @param[in] col the column size of matrix
+ * @return the identity matrix with size ( \p row, \p col )
+ */
 MatrixT *new_identity_matrix(uint8_t row, uint8_t col) {
   // get an empty matrix
   MatrixT *identity_matrix = new_matrix(row, col);
@@ -73,16 +78,15 @@ MatrixT *new_identity_matrix(uint8_t row, uint8_t col) {
   return identity_matrix;
 }
 
-/// @function: new_matrix_from_array (uint8_t, uint8_t,
-///                                   MatrixOrientation,
-///                                   const complexfloat *)
-///                                  -> MatrixT *
-/// @param: <row> the row size of matrix
-/// @param: <col> the column size of matrix
-/// @param: <orientation> the orientation which is used
-/// @param: <array> the array to use (must longer or equal than row * col)
-/// @return: the matrix with size (row, col) filled by the array
-/// @info: construct an zero matrix with size (row, col)
+/**
+ * @brief construct an zero matrix from an array
+ *
+ * @param[in] row the row size of matrix
+ * @param[in] col the column size of matrix
+ * @param[in] orientation the orientation which is used
+ * @param[in] array the array to use ( len( \p array ) <= \p row * \p col )
+ * @return he matrix with size ( \p row, \p col) filled by \p array
+ */
 MatrixT *new_matrix_from_array(uint8_t row, uint8_t col,
                                MatrixOrientation orientation,
                                const complex float *array) {
@@ -104,13 +108,13 @@ MatrixT *new_matrix_from_array(uint8_t row, uint8_t col,
   return matrix;
 }
 
-/// @function: new_matrix_from_file (const char *,
-///                                  size_t *)
-///                                 -> Matrix **
-/// @param: <file_path> the path to the file
-/// @param: <matrix_number> number of matrix to read
-/// @return: matrices from file
-/// @info: read matrices from file
+/**
+ * @brief read matrices from file
+ *
+ * @param[in] file_path the path to the file
+ * @param[in] matrix_number number of matrix to read
+ * @return matrices from file
+ */
 MatrixT **new_matrix_from_file(const char *file_path, size_t *matrix_number) {
   // test: open file
   FILE *file_handle = fopen(file_path, "r");
@@ -185,13 +189,13 @@ MatrixT **new_matrix_from_file(const char *file_path, size_t *matrix_number) {
   return matrices;
 }
 
-/// @function: new_matrix_from_file (const char *, Matrix **,
-///                                  size_t)
-///                                 -> unit
-/// @param: <file_path> the path to the file
-/// @param: <matrices> the matrices to save
-/// @param: <matrix_number> number of matrix to save
-/// @info: save matrices to file filled by row
+/**
+ * @brief save matrices to file filled by #ROW
+ *
+ * @param[in] file_path the path to the file
+ * @param[in] matrices the matrices to save
+ * @param[in] matrix_number number of matrix to save
+ */
 void save_matrix_to_file(const char *file_path, MatrixT **matrices,
                          size_t matrix_number) {
   // boundary test: null pointer
@@ -225,11 +229,12 @@ void save_matrix_to_file(const char *file_path, MatrixT **matrices,
   fclose(file_handle);
 }
 
-/// @function: copy_matrix (MatrixT *)
-///                        -> MatrixT *
-/// @param: <matrix> the original matrix
-/// @return: the copy of the original matrix
-/// @info: copy a matrix
+/**
+ * @brief copy a matrix
+ *
+ * @param[in] matrix the original matrix
+ * @return the copy of the original matrix
+ */
 MatrixT *copy_matrix(const MatrixT *matrix) {
   // boundary test: null pointer
   if (matrix == NULL) {
@@ -246,10 +251,11 @@ MatrixT *copy_matrix(const MatrixT *matrix) {
   return copied_matrix;
 }
 
-/// @function: drop_matrix (MatrixT *)
-///                        -> unit
-/// @param: <matrix> the matrix to drop
-/// @info: delete a matrix
+/**
+ * @brief delete a matrix
+ *
+ * @param[in] matrix the matrix to drop
+ */
 extern void drop_matrix(MatrixT *matrix) {
   // if matrix is null, it's fine
   if (matrix == NULL) {
@@ -263,11 +269,11 @@ extern void drop_matrix(MatrixT *matrix) {
   free(matrix);
 }
 
-/// @function: drop_matrices (Matrix **, size_t)
-///                          -> unit
-/// @param: <matrices> matrices to drop
-/// @param: <matrices_number> number of matrices to drop
-/// @info: delete matrices at one time
+/**
+ * @brief delete matrices at one time
+ * @param[in] matrices matrices to drop
+ * @param[in] matrices_number number of matrices to drop
+ */
 void drop_matrices(MatrixT **matrices, size_t matrices_number) {
   for (size_t i = 0; i < matrices_number; ++i) {
     drop_matrix(matrices[i]);

@@ -1,5 +1,7 @@
-/// @file: matrix/matrix_ext.h
-/// @info: extensional header file of matrix library
+/**
+ * @file matrix/matrix_ext.h
+ * @brief extensional header file of matrix library
+ */
 
 #pragma once
 #ifndef __MATRIX_MATRIX_EXT_H__
@@ -11,42 +13,46 @@
 
 // function: extensions
 
-/// @function: upper_triangularize_matrix (const MatrixT *)
-///                                    -> MatrixT **
-/// @param: <matrix> the matrix to decomposition
-/// @return: the result of LU decomposition of matrix
-/// @info: get the INVERSE Left matrix and Right matrix
+/**
+ * @brief triangularize a matrix
+ *
+ * @param[in] matrix the matrix to use
+ * @return the premutation matrix and triangularized \p matrix
+ */
 extern MatrixT **upper_triangularize_matrix(const MatrixT *matrix);
 
-/// @function: decomposition_matrix_lu (const MatrixT *)
-///                                    -> MatrixT **
-/// @param: <matrix> the matrix to decomposition
-/// @return: the result of LU decomposition of matrix
-/// @info: get the Left matrix and Right matrix
+/**
+ * @brief decompose a matrix with LU method
+ *
+ * @param[in] matrix the matrix to use
+ * @return the result of LU decomposition of \p matrix
+ */
 extern MatrixT **decomposition_matrix_lu(const MatrixT *matrix);
 
-/// @function: simplify_matrix (const MatrixT *)
-///                            -> MatrixT *
-/// @param: <matrix> the matrix to simplify
-/// @return: the simplified matrix
-/// @info: get the simplest form of the matrix
+/**
+ * @brief simplify a matrix
+ *
+ * @param[in] matrix the matrix to simplify
+ * @return simplified \p matrix
+ */
 extern MatrixT *simplify_matrix(const MatrixT *matrix);
 
-/// @function: decomposition_matrix_qr (const MatrixT *)
-///                                    -> MatrixT **
-/// @param: <matrix> the matrix to decomposition
-/// @return: the result of QR decomposition of matrix
-/// @info: apply QR decomposition on the matrix
+/**
+ * @brief decompose a matrix with QR method
+ *
+ * @param[in] matrix the matrix to use
+ * @return the result of QR decomposition of \p matrix
+ */
 extern MatrixT **decomposition_matrix_qr(const MatrixT *matrix);
 
-/// @function: get_matrix_eigenvalue_qr (const MatrixT *,
-///                                      size_t)
-///                                     -> MatrixT **
-/// @param: <matrix> the matrix to use
-/// @param: <max_iter> maximum iter times
-/// @return: the eigen system of the matrix
-/// @info: use QR method to calculate eigenvalue of a matrix
-extern MatrixT **get_matrix_eigenvalue_qr(const MatrixT *matrix,
-                                          size_t max_iter);
+/**
+ * @brief use QR method to calculate the eigen system of a matrix
+ *
+ * @param[in] matrix the matrix to use
+ * @param[in] max_iter maximum iter times
+ * @return the eigen system of \p matrix
+ */
+extern MatrixT **get_matrix_eigensystem_qr(const MatrixT *matrix,
+                                           size_t max_iter);
 
 #endif

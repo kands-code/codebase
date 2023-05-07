@@ -1,5 +1,7 @@
-/// @file: matrix/utils.h
-/// @info: some utilities of matrix library
+/**
+ * @file matrix/utils.h
+ * @brief some utilities of matrix library
+ */
 
 #pragma once
 #ifndef __MATRIX_UTILS_H__
@@ -12,44 +14,66 @@
 
 // macros
 
-/// @macro: MAX (x, y)
-/// @info: return the maximum value between x and y
+/**
+ * \def MAX (x, y)
+ *
+ * get the maximum value between \p x and \p y
+ */
 #define MAX(x, y) (x) > (y) ? (x) : (y)
 
-/// @macro: MIN (x, y)
-/// @info: return the minimum value between x and y
+/**
+ * \def MIN (x, y)
+ *
+ * get the minimum value between \p x and \p y
+ */
 #define MIN(x, y) (x) > (y) ? (y) : (x)
 
-/// @macro: IS_ODD (x)
-/// @info: check a number whether an odd number
+/**
+ * \def IS_ODD(x)
+ *
+ * check \p x whether an odd number
+ */
 #define IS_ODD(x) ((x)&0x01)
 
-/// @macro: IS_EVEN (x)
-/// @info: check a number whether an even number
+/**
+ * \def IS_EVEN (x)
+ *
+ * check \p x whether an even number
+ */
 #define IS_EVEN(x) (!IS_ODD(x))
 
 // functions: log
 
-/// @function: log_info (const char *, ...)
-///                     -> stderr
-/// @info: print info logs
+/**
+ * @brief print info logs
+ *
+ * @param[in] message the message to log
+ * @param[in] params the params of the message
+ */
 extern void log_info(const char *message, ...);
 
-/// @function: log_warn (const char *, ...)
-///                     -> stderr
-/// @info: print warning logs
+/**
+ * @brief print warning logs
+ *
+ * @param[in] message the message to log
+ * @param[in] params the params of the message
+ */
 extern void log_warn(const char *message, ...);
 
-/// @function: log_error (const char *, ...)
-///                      -> stderr
-/// @info: print error logs
+/**
+ * @brief print error logs
+ *
+ * @param[in] message the message to log
+ * @param[in] params the params of the message
+ */
 extern void log_error(const char *message, ...);
 
-/// @function: is_complex_zero (complex float)
-///                            -> bool
-/// @param: <value> the value to check
-/// @return: if the value is zero, return true, or false
-/// @info: check whether a value is zero
+/**
+ * @brief check whether a value is zero
+ *
+ * @param[in] value the value to check
+ * @return true if \p value is zero, or false
+ */
 extern bool is_complex_zero(complex float value);
 
 #endif

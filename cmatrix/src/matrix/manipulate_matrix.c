@@ -1,5 +1,7 @@
-/// @file: matrix/manipulate_matrix.c
-/// @info: manipulate matrices
+/**
+ * @file matrix/manipulate_matrix.c
+ * @brief manipulate matrices
+ */
 
 // include
 
@@ -13,21 +15,22 @@
 
 // functions: manipulate
 
-/// @function: show_matrix (const MatrixT *)
-///                        -> unit
-/// @param: <matrix> the matrix to show
-/// @info: print the matrix with default precision
+/**
+ * @brief  print the matrix with default precision
+ *
+ * @param[in] matrix the matrix to show
+ */
 void show_matrix(const MatrixT *matrix) {
   // default precision: 4
   show_matrix_with_precision(matrix, 4);
 }
 
-/// @function: show_matrix (const MatrixT *,
-///                         uint8_t)
-///                        -> unit
-/// @param: <matrix> the matrix to show
-/// @param: <precision> the precision to use
-/// @info: print the matrix with a specific precision
+/**
+ * @brief print the matrix with a specific precision
+ *
+ * @param[in] matrix the matrix to show
+ * @param[in] precision the precision to use
+ */
 void show_matrix_with_precision(const MatrixT *matrix, uint8_t precision) {
   // boundary test: null pointer
   if (matrix == NULL) {
@@ -52,11 +55,12 @@ void show_matrix_with_precision(const MatrixT *matrix, uint8_t precision) {
   puts("<<matrix>>");
 }
 
-/// @function: transpose_matrix (const MatrixT *)
-///                             -> MatrixT *
-/// @param: <matrix> the matrix to use
-/// @return: the transposed matrix
-/// @info: transpose a matrix
+/**
+ * @brief transpose a matrix
+ *
+ * @param[in] matrix the matrix to use
+ * @return the transpose matrix of \p matrix
+ */
 MatrixT *transpose_matrix(const MatrixT *matrix) {
   // boundary test: null pointer
   if (matrix == NULL) {
@@ -74,12 +78,13 @@ MatrixT *transpose_matrix(const MatrixT *matrix) {
   return transposed_matrix;
 }
 
-/// @function: scalar_mul_matrix (complex float, const MatrixT *)
-///                              -> MatrixT *
-/// @param: <scalar> the scalar to use
-/// @param: <matrix> the matrix to use
-/// @return: the product of scalar and matrix
-/// @info: do scalar product with the scalar and the matrix
+/**
+ * @brief do scalar product with the scalar and a matrix
+ *
+ * @param[in] scalar the scalar to use
+ * @param[in] matrix the matrix to use
+ * @return the product with \p scalar and \p matrix
+ */
 MatrixT *scalar_mul_matrix(complex float scalar, const MatrixT *matrix) {
   // boundary test: null pointer
   if (matrix == NULL) {
@@ -95,41 +100,43 @@ MatrixT *scalar_mul_matrix(complex float scalar, const MatrixT *matrix) {
   return prod_matrix;
 }
 
-/// @function: add_matrix (const MatrixT *, const MatrixT *)
-///                       -> MatrixT *
-/// @param: <lhm> the left hand side matrix
-/// @param: <rhm> the right hand side matrix
-/// @return: the sum of the two matrices
-/// @info: do addition of two matrices
-MatrixT *add_matrix(const MatrixT *lhm, const MatrixT *rhm) {
+/**
+ * @brief do addition of two matrices
+ *
+ * @param lsm the left hand side matrix
+ * @param rsm the right hand side matrix
+ * @return the sum of the lhm and rhm
+ */
+MatrixT *add_matrix(const MatrixT *lsm, const MatrixT *rsm) {
   // boundary test: null pointer
-  if (lhm == NULL || rhm == NULL) {
+  if (lsm == NULL || rsm == NULL) {
     log_error("panic: null pointer error at %s", __func__);
     exit(EXIT_FAILURE);
   }
   // boundary test: equal size
-  if (lhm->size[0] != rhm->size[0] || lhm->size[1] != rhm->size[1]) {
+  if (lsm->size[0] != rsm->size[0] || lsm->size[1] != rsm->size[1]) {
     log_error(
         "panic: lhm size (%u, %u) is not compatible with rhm size (%u, %u)",
-        lhm->size[0], lhm->size[1], rhm->size[0], rhm->size[1]);
+        lsm->size[0], lsm->size[1], rsm->size[0], rsm->size[1]);
     exit(EXIT_FAILURE);
   }
   // init: sum matrix
-  MatrixT *sum_matrix = new_matrix(lhm->size[0], rhm->size[1]);
+  MatrixT *sum_matrix = new_matrix(lsm->size[0], rsm->size[1]);
   // add two matrices
-  for (size_t i = 0; i < rhm->size[0] * lhm->size[1]; ++i) {
-    sum_matrix->data[i] = lhm->data[i] + rhm->data[i];
+  for (size_t i = 0; i < rsm->size[0] * lsm->size[1]; ++i) {
+    sum_matrix->data[i] = lsm->data[i] + rsm->data[i];
   }
   // return: sum matrix
   return sum_matrix;
 }
 
-/// @function: vector_inner_product (const MatrixT *, const MatrixT *)
-///                                 -> complex float
-/// @param: <lhv> the left hand side vector
-/// @param: <rhv> the right hand side vector
-/// @return: the inner product of the two vectors
-/// @info: do common inner product of two vectors
+/**
+ * @brief do common inner product of two vectors
+ *
+ * @param[in] lhv the left hand side vector
+ * @param[in] rhv the right hand side vector
+ * @return the inner product of the \p lhv and \p rhv
+ */
 complex float vector_inner_product(const MatrixT *lhv, const MatrixT *rhv) {
   // boundary test: null pointer
   if (lhv == NULL || rhv == NULL) {
@@ -154,12 +161,13 @@ complex float vector_inner_product(const MatrixT *lhv, const MatrixT *rhv) {
   return inner_prod;
 }
 
-/// @function: vector_col_row_product (const MatrixT *, const MatrixT *)
-///                                   -> MatrixT *
-/// @param: <lhv> the left hand side vector (coloumn vector)
-/// @param: <rhv> the right hand side vector (row vector)
-/// @return: the inner product of the two vectors
-/// @info: do inner product of two vectors
+/**
+ * @brief do inner product of two vectors
+ *
+ * @param[in] lhv the left hand side vector
+ * @param[in] rhv the right hand side vector
+ * @return the inner product of the \p lhv and \p rhv
+ */
 MatrixT *vector_col_row_product(const MatrixT *lhv, const MatrixT *rhv) {
   // boundary test: null pointer
   if (lhv == NULL || rhv == NULL) {
@@ -185,12 +193,13 @@ MatrixT *vector_col_row_product(const MatrixT *lhv, const MatrixT *rhv) {
   return inner_prod;
 }
 
-/// @function: vector_cross_product_3d (const MatrixT *, const MatrixT *)
-///                                    -> MatrixT *
-/// @param: <lhv> the left hand side vector (column vector)
-/// @param: <rhv> the right hand side vector (row vector)
-/// @return: the cross product of the two vectors
-/// @info: do cross product of two vectors
+/**
+ * @brief do cross product of two vectors
+ *
+ * @param[in] lhv the left hand side vector
+ * @param[in] rhv the right hand side vector
+ * @return the cross product of the \p lhv and \p rhv
+ */
 MatrixT *vector_cross_product_3d(const MatrixT *lhv, const MatrixT *rhv) {
   // boundary test: null pointer
   if (lhv == NULL || rhv == NULL) {
@@ -222,12 +231,13 @@ MatrixT *vector_cross_product_3d(const MatrixT *lhv, const MatrixT *rhv) {
   return cross_prod;
 }
 
-/// @function: mul_matrix (const MatrixT *, const MatrixT *)
-///                       -> MatrixT *
-/// @param: <lhm> the left hand side matrix
-/// @param: <rhm> the right hand side matrix
-/// @return: the product of the two matrices
-/// @info: do product of two matrices
+/**
+ * @brief do multiplication of two matrices
+ *
+ * @param[in] lhm the left hand side matrix
+ * @param[in] rhm the right hand side matrix
+ * @return the product of the \p lhm and \p rhm
+ */
 MatrixT *mul_matrix(const MatrixT *lhm, const MatrixT *rhm) {
   // boundary test: null pointer
   if (lhm == NULL || rhm == NULL) {
@@ -258,12 +268,13 @@ MatrixT *mul_matrix(const MatrixT *lhm, const MatrixT *rhm) {
   return prod_matrix;
 }
 
-/// @function: tensor_product_matrix (const MatrixT *, const MatrixT *)
-///                                  -> MatrixT *
-/// @param: <lhm> the left hand side matrix
-/// @param: <rhm> the right hand side matrix
-/// @return: the tensor product of the two matrices
-/// @info: do tensor product of two matrices
+/**
+ * @brief do tensor product of two matrices
+ *
+ * @param[in] lhm the left hand side matrix
+ * @param[in] rhm the right hand side matrix
+ * @return the tensor product of the \p lhm and \p rhm
+ */
 MatrixT *tensor_product_matrix(const MatrixT *lhm, const MatrixT *rhm) {
   // boundary test: null pointer
   if (lhm == NULL || rhm == NULL) {

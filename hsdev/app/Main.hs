@@ -1,8 +1,7 @@
 module Main where
 
-import Data.Maybe (fromMaybe)
 import Text.Printf (printf)
-import Tool (fib)
+import Tool (fib, fromMaybe)
 
 main :: IO ()
 main = do

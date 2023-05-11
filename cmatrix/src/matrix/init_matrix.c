@@ -62,7 +62,7 @@ MatrixT *new_random_real_matrix(uint8_t row, uint8_t col) {
   srand(time(NULL));
   MatrixT *rand_matrix = new_matrix(row, col);
   for (uint16_t i = 0; i < row * col; ++i) {
-    rand_matrix->data[i] = new_complex((float)rand() / (float)RAND_MAX, 0);
+    rand_matrix->data[i] = new_complex((float)rand() / (float)RAND_MAX, 0.0f);
   }
   return rand_matrix;
 }
@@ -94,6 +94,30 @@ MatrixT *new_matrix_from_array(uint8_t row, uint8_t col,
   } else {
     log_error("panic: illegal argument of orientation: %d", orientation);
     exit(EXIT_FAILURE);
+  }
+  return matrix;
+}
+
+MatrixT *new_matrix_from_input() {
+  printf("matrix size: ");
+  uint8_t row = 0;
+  uint8_t col = 0;
+  scanf("%hhu %hhu", &row, &col);
+  MatrixT *matrix = new_matrix(row, col);
+  puts("matrix content:");
+  for (uint16_t i = 0; i < row * col; ++i) {
+    char sign = '\0';
+    float real = 0.0f;
+    float imag = 0.0f;
+    scanf("%f%c%f", &real, &sign, &imag);
+    if (sign == '-') {
+      matrix->data[i] = new_complex(real, -imag);
+    } else if (sign == '+') {
+      matrix->data[i] = new_complex(real, imag);
+    } else {
+      log_warn("warn: recived wrong input, re-try");
+      --i;
+    }
   }
   return matrix;
 }

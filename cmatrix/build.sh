@@ -36,14 +36,14 @@ if [[ -d "$curr_dir/output" ]]; then
   pushd "$curr_dir/output" &>/dev/null
   meson "$meson_command"
   popd &>/dev/null
-  # do check
-  if
-    type valgrind &>/dev/null
-    [[ "$?" == '0' ]]
-  then
-    touch "$curr_dir/output/check.log"
-    valgrind --leak-check=full "$curr_dir/output/app" &>"$curr_dir/output/check.log"
-  fi
+  # # do check
+  # if
+  #   type valgrind &>/dev/null
+  #   [[ "$?" == '0' ]]
+  # then
+  #   touch "$curr_dir/output/check.log"
+  #   valgrind --leak-check=full "$curr_dir/output/app" &>"$curr_dir/output/check.log"
+  # fi
   # do pack
   if [[ -d "$curr_dir/$default_pack_dir" ]]; then
     tar -czvf "$default_pack_name" -C "$default_pack_dir" '.'

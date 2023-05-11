@@ -86,11 +86,18 @@ extern MatrixT *new_random_matrix(uint8_t row, uint8_t col);
  * @param[in] col the column size of matrix
  * @param[in] orientation the orientation which is used
  * @param[in] array the array to use ( len( \p array ) <= \p row * \p col )
- * @return he matrix with size ( \p row, \p col) filled by \p array
+ * @return the matrix with size ( \p row, \p col) filled by \p array
  */
 extern MatrixT *new_matrix_from_array(uint8_t row, uint8_t col,
                                       MatrixOrientation orientation,
                                       const complex float *array);
+
+/**
+ * @brief construct a matrix from user input
+ *
+ * @return a matrix
+ */
+extern MatrixT *new_matrix_from_input();
 
 /**
  * @brief read matrices from file

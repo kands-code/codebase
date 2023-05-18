@@ -4,13 +4,13 @@
  */
 
 #pragma once
-#include <stdbool.h>
 #ifndef __MATRIX_MATRIX_H__
 #define __MATRIX_MATRIX_H__
 
-// include
+// standard include
 
 #include <complex.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 

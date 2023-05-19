@@ -59,4 +59,14 @@ extern void log_warn(const char *message, ...);
  */
 extern void log_error(const char *message, ...);
 
+// functions: utils
+
+/**
+ * @brief get a copy of a string
+ *
+ * @param[in] origin_string the original string
+ * @return the copy of \p original_string
+ */
+extern char *str_copy(const char *origin_string);
+
 #endif

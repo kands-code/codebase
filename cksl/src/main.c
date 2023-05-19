@@ -3,8 +3,7 @@
 #include "ksl/vector.h"
 
 int main(void) {
-  Vector *tokens =
-      tokenizer("Add[1, 2, 3]; x := Tim[3, 4]; y := \"Hello World\"");
+  Vector *tokens = tokenizer("x := 12.3; y := Any[12, \"Hello World\"]");
   show_vector(tokens);
   drop_vector(tokens);
   return 0;

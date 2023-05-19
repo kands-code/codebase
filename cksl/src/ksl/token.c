@@ -72,204 +72,215 @@ char *get_token_type_name(TokenType type) {
   }
 }
 
+/**
+ * @brief process numbers in tokenization
+ *
+ * @param[in] code the code to process
+ * @param[in] num_bias the bias of number
+ * @return the token of number
+ */
+Token *get_num_token(const char *code, size_t *num_bias) {
+  // boundary test: null pointer
+  is_null(code);
+  is_null(num_bias);
+  // first scan
+  *num_bias = 0;
+  size_t num_buffer_size = 1;
+  bool is_floating_point_number = false;
+  while (*(code + *num_bias) != '\0') {
+    char current_char = *(code + *num_bias);
+    // check current character
+    if (current_char == '.' && is_floating_point_number) {
+      // duplicate dot
+      log_error("panic: duplicate dot in %f", __func__);
+      return NULL;
+    } else if (current_char == '.' && !is_floating_point_number) {
+      // number is floating-point number
+      is_floating_point_number = true;
+      num_buffer_size += 1;
+    } else if (isdigit(current_char)) {
+      // normal number
+      num_buffer_size += 1;
+    } else {
+      // meet other character, exit scan
+      break;
+    }
+    // increase bias
+    *num_bias += 1;
+  }
+  // construct number token
+  char *token_value = calloc(num_buffer_size, sizeof(char));
+  size_t value_cnt = 0;
+  for (size_t i = 0; i < *num_bias && value_cnt < num_buffer_size; ++i) {
+    char current_char = code[i];
+    if (isblank(current_char)) {
+      // blank do not matter
+      continue;
+    } else {
+      token_value[value_cnt++] = current_char;
+    }
+  }
+  token_value[num_buffer_size] = '\0';
+  // return: number token
+  return new_token(is_floating_point_number ? FloatLiteral : IntegerLiteral,
+                   token_value);
+}
+
+/**
+ * @brief process identity in tokenization
+ *
+ * @param[in] code the code to process
+ * @param[in] ident_bias the bias of identity
+ * @return the token of identity
+ */
+Token *get_ident_token(const char *code, size_t *ident_bias) {
+  // boundary test: null pointer
+  is_null(code);
+  is_null(ident_bias);
+  // scan identity
+  *ident_bias = 0;
+  while (*(code + *ident_bias) != '\0') {
+    char current_char = *(code + *ident_bias);
+    if (isdigit(current_char) || isalpha(current_char) || current_char == '_') {
+      // ident := (`(A-Z)` | `(a-z)` | `(0-9)` | `_`)*
+      *ident_bias += 1;
+    } else {
+      // meet other character
+      break;
+    }
+  }
+  // construct idenity token
+  char *token_value = calloc(*ident_bias + 1, sizeof(char));
+  for (size_t i = 0; i < *ident_bias; ++i) {
+    token_value[i] = code[i];
+  }
+  token_value[*ident_bias + 1] = '\0';
+  return new_token(Identity, token_value);
+}
+
+/**
+ * @brief process string in tokenization
+ *
+ * @param[in] code the code to process
+ * @param[in] ident_bias the bias of string
+ * @return the token of string
+ */
+Token *get_str_token(const char *code, size_t *str_bias) {
+  // boundary test: null pointer
+  is_null(code);
+  is_null(str_bias);
+  // scan identity
+  *str_bias = 0;
+  bool is_ending = false;
+  while (*(code + *str_bias) != '\0') {
+    char current_char = *(code + *str_bias);
+    *str_bias += 1;
+    if (current_char == '"') {
+      // meet ending
+      is_ending = true;
+      break;
+    }
+  }
+  // check ending
+  if (!is_ending) {
+    // no ending string
+    log_error("panic: no ending string");
+    return NULL;
+  }
+  // construct string token
+  char *token_value = calloc(*str_bias, sizeof(char));
+  strncpy(token_value, code, *str_bias - 1);
+  token_value[*str_bias] = '\0';
+  // return: string token
+  return new_token(StringLiteral, token_value);
+}
+
 Vector *tokenizer(const char *code) {
   // boundary test: null pointer
   is_null(code);
   // start tokenize
   Vector *tokens = new_vector();
-  bool is_string_literal = false;
-  bool is_ident = false;
-  bool is_bind = false;
-  bool is_number_literal = false;
-  bool is_float_literal = false;
-  size_t start_point = 0;
-  for (size_t i = 0; i < strlen(code); ++i) {
-    char current_char = code[i];
-    if (!is_string_literal && isblank(current_char)) {
-      // blank characters do not matter
+  // iter all char of code
+  size_t bias = 0;
+  while (*(code + bias) != '\0') {
+    char current_char = *(code + bias);
+    // init: token
+    size_t token_bias = 0;
+    Token *token = NULL;
+    // check current char
+    if (isblank(current_char)) {
+      // omit all black characters
+      bias += 1;
       continue;
-    } else if (!is_string_literal && is_ident &&
-               !(islower(current_char) || isupper(current_char) ||
-                 current_char == '_' || isdigit(current_char))) {
-      // stop identity
-      char *value = calloc(i - start_point + 1, sizeof(char));
-      size_t value_cnt = 0;
-      for (size_t j = start_point; j < i; ++j) {
-        if (!isblank(code[j])) {
-          value[value_cnt++] = code[j];
-        }
+    } else if (isdigit(current_char)) {
+      // if meet number, capture number
+      token = get_num_token(code + bias, &token_bias);
+    } else if (isalpha(current_char)) {
+      // try capture identity
+      token = get_ident_token(code + bias, &token_bias);
+    } else if (current_char == '"') {
+      // start to capture string
+      bias += 1;
+      token = get_str_token(code + bias, &token_bias);
+    } else if (current_char == ':') {
+      if (*(code + bias + 1) == '=') {
+        // meet bind sign
+        bias += 2;
+        append_to_vector(tokens, new_token(Bind, str_copy(":=")));
+        continue;
       }
-      value[value_cnt] = '\0';
-      // append identity
-      append_to_vector(tokens, new_token(Identity, value));
-      is_ident = false;
-      // roll back
-      i -= 1;
-    } else if (is_number_literal && !isdigit(current_char)) {
-      // stop capture number
-      char *value = calloc(i - start_point + 1, sizeof(char));
-      size_t value_cnt = 0;
-      for (size_t j = start_point; j < i; ++j) {
-        if (!isblank(code[j])) {
-          value[value_cnt++] = code[j];
-        }
-      }
-      value[value_cnt] = '\0';
-      // append token to tokens
-      if (is_float_literal) {
-        append_to_vector(tokens, new_token(FloatLiteral, value));
-        is_float_literal = false;
-      } else {
-        append_to_vector(tokens, new_token(IntegerLiteral, value));
-      }
-      is_number_literal = false;
-      // roll back
-      i -= 1;
-    } else if (current_char == ',') {
-      // append seperator
-      char *value = calloc(2, sizeof(char));
-      value[0] = ',';
-      value[1] = '\0';
-      append_to_vector(tokens, new_token(Seperator, value));
-    } else if (current_char == ';') {
-      // append simicolon
-      char *value = calloc(2, sizeof(char));
-      value[0] = ';';
-      value[1] = '\0';
-      append_to_vector(tokens, new_token(Simicolon, value));
     } else if (current_char == '(') {
-      // append open parenthese
-      char *value = calloc(2, sizeof(char));
-      value[0] = '(';
-      value[1] = '\0';
-      append_to_vector(tokens, new_token(OpenParenthese, value));
+      // open parenthese
+      bias += 1;
+      append_to_vector(tokens, new_token(OpenParenthese, str_copy("(")));
+      continue;
     } else if (current_char == ')') {
-      // append close parenthese
-      char *value = calloc(2, sizeof(char));
-      value[0] = ')';
-      value[1] = '\0';
-      append_to_vector(tokens, new_token(CloseParenthese, value));
+      // close parenthese
+      bias += 1;
+      append_to_vector(tokens, new_token(CloseParenthese, str_copy(")")));
+      continue;
     } else if (current_char == '[') {
-      // append open function
-      char *value = calloc(2, sizeof(char));
-      value[0] = '[';
-      value[1] = '\0';
-      append_to_vector(tokens, new_token(OpenFunction, value));
+      // open function
+      bias += 1;
+      append_to_vector(tokens, new_token(OpenFunction, str_copy("[")));
+      continue;
     } else if (current_char == ']') {
-      // append close function
-      char *value = calloc(2, sizeof(char));
-      value[0] = ']';
-      value[1] = '\0';
-      append_to_vector(tokens, new_token(CloseFunction, value));
+      // close function
+      bias += 1;
+      append_to_vector(tokens, new_token(CloseFunction, str_copy("]")));
+      continue;
     } else if (current_char == '{') {
-      // append open list
-      char *value = calloc(2, sizeof(char));
-      value[0] = '{';
-      value[1] = '\0';
-      append_to_vector(tokens, new_token(OpenList, value));
+      // open list
+      bias += 1;
+      append_to_vector(tokens, new_token(OpenList, str_copy("{")));
+      continue;
     } else if (current_char == '}') {
-      // append close function
-      char *value = calloc(2, sizeof(char));
-      value[0] = '}';
-      value[1] = '\0';
-      append_to_vector(tokens, new_token(CloseList, value));
-    } else if (current_char == ':' && !is_bind) {
-      // start capture bind sign
-      is_bind = true;
-    } else if (is_bind && current_char == '=') {
-      // stop capture bind sign
-      char *value = calloc(3, sizeof(char));
-      value[0] = ':';
-      value[1] = '=';
-      value[2] = '\0';
-      // append token
-      append_to_vector(tokens, new_token(Bind, value));
-      is_bind = false;
-    } else if (is_bind && current_char != '=') {
-      // wrong bind sign
-      log_error("panic: wrong bind sign in %s", __func__);
-      drop_vector(tokens);
-      return NULL;
-    } else if (!is_ident && !is_string_literal && !is_number_literal &&
-               isdigit(current_char)) {
-      // start capture number
-      start_point = i;
-      is_number_literal = true;
-    } else if (current_char == '.' && !is_float_literal) {
-      // the number is floating-point number
-      is_float_literal = true;
-    } else if (current_char == '.' && is_float_literal) {
-      // duplicate dot
-      log_error("panic: duplicate dot in %f", __func__);
-      // failed to tokenize
-      drop_vector(tokens);
-      return NULL;
-    } else if (!is_string_literal &&
-               (islower(current_char) || isupper(current_char) ||
-                current_char == '_') &&
-               !is_ident) {
-      // start capture identity
-      is_ident = true;
-      start_point = i;
-    } else if (current_char == '"' && !is_string_literal) {
-      // start capture string
-      is_string_literal = true;
-      start_point = i;
-    } else if (is_string_literal && current_char == '"') {
-      // stop string
-      char *value = calloc(i - start_point + 2, sizeof(char));
-      strncpy(value, code + start_point, i - start_point + 1);
-      value[i - start_point + 1] = '\0';
-      // append string
-      append_to_vector(tokens, new_token(StringLiteral, value));
-      is_string_literal = false;
+      // close list
+      bias += 1;
+      append_to_vector(tokens, new_token(CloseList, str_copy("}")));
+      continue;
+    } else if (current_char == ',') {
+      // sperator
+      bias += 1;
+      append_to_vector(tokens, new_token(Seperator, str_copy(",")));
+      continue;
+    } else if (current_char == ';') {
+      // simicolon
+      bias += 1;
+      append_to_vector(tokens, new_token(Simicolon, str_copy(";")));
+      continue;
     }
-  }
-  // append last token
-  if (is_bind) {
-    char *value = calloc(3, sizeof(char));
-    value[0] = ':';
-    value[1] = '=';
-    value[2] = '\0';
-    // append token
-    append_to_vector(tokens, new_token(Bind, value));
-    is_bind = false;
-  } else if (is_number_literal) {
-    char *value = calloc(strlen(code) - start_point + 1, sizeof(char));
-    size_t value_cnt = 0;
-    for (size_t j = start_point; j < strlen(code); ++j) {
-      if (!isblank(code[j])) {
-        value[value_cnt++] = code[j];
-      }
-    }
-    value[value_cnt] = '\0';
     // append token to tokens
-    if (is_float_literal) {
-      append_to_vector(tokens, new_token(FloatLiteral, value));
-      is_float_literal = false;
+    if (token == NULL) {
+      // failed to get number token
+      drop_vector(tokens);
+      return NULL;
     } else {
-      append_to_vector(tokens, new_token(IntegerLiteral, value));
+      // append to tokens
+      append_to_vector(tokens, token);
+      // add token bias to bias
+      bias += token_bias;
     }
-    is_number_literal = false;
-  } else if (is_ident) {
-    char *value = calloc(strlen(code) - start_point + 1, sizeof(char));
-    size_t value_cnt = 0;
-    for (size_t j = start_point; j < strlen(code); ++j) {
-      if (!isblank(code[j])) {
-        value[value_cnt++] = code[j];
-      }
-    }
-    value[value_cnt] = '\0';
-    // append identity
-    append_to_vector(tokens, new_token(Identity, value));
-    is_ident = false;
-  } else if (is_string_literal) {
-    char *value = calloc(strlen(code) - start_point + 1, sizeof(char));
-    strncpy(value, code + start_point, strlen(code) - start_point);
-    value[strlen(code) - start_point] = '\0';
-    // append string
-    append_to_vector(tokens, new_token(StringLiteral, value));
-    is_string_literal = false;
   }
   // return: tokens
   return tokens;

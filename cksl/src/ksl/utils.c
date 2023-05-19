@@ -8,7 +8,10 @@
 #include "ksl/utils.h"
 #include <stdarg.h>
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 // constants: ANSI color control sequences
 
@@ -83,4 +86,15 @@ void log_error(const char *message, ...) {
   fprintf(stderr, "%s%s%s\n", ANSI_COLOR_RED, error_message, ANSI_COLOR_RESET);
   // end: close varing list
   va_end(args);
+}
+
+// functions: utils
+
+char *str_copy(const char *origin_string) {
+  // a short cut of copy a string
+  size_t origin_string_length = strlen(origin_string);
+  char *copy_string = calloc(origin_string_length + 1, sizeof(char));
+  strncpy(copy_string, origin_string, origin_string_length);
+  copy_string[origin_string_length + 1] = '\0';
+  return copy_string;
 }

@@ -26,3 +26,14 @@ F[x: Integer, y: Float, z: String]: String :=
 
 Print[F[1, 0.4, " yes"]]; (* => "1 yes" *)
 ```
+
+### 类型
+
+```ksl
+(* only list like type support, access by Get and Ident *)
+TypeBind[SelfType, { x: Integer, y: Integer }];
+
+p: SelfType = { x := 10, y := 20 };
+
+Print[Get[p, x] + Get[p, y]]; (* => 30 *)
+```

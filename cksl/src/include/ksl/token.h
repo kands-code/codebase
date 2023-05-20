@@ -23,13 +23,14 @@ typedef struct Vector Vector;
  * @brief types of token
  */
 typedef enum TokenType {
-  Seperator,       ///< seperator `,`
-  Simicolon,       ///< simicolon `;`
-  Bind,            ///< bind operator `:=`
   Identity,        ///< identity
   IntegerLiteral,  ///< literal of integer
   FloatLiteral,    ///< literal of floating-point number
   StringLiteral,   ///< literal of string
+  Symbol,          ///< symbol
+  Bind,            ///< bind operator `:=`
+  Seperator,       ///< seperator `,`
+  Simicolon,       ///< simicolon `;`
   OpenParenthese,  ///< open parenthese `(`
   CloseParenthese, ///< close parenthese `)`
   OpenFunction,    ///< start function `[`
@@ -55,7 +56,7 @@ typedef struct Token {
  * @param[in] value the value of token
  * @return the token with \p type and \p value
  */
-extern Token *new_token(TokenType type, const char *value);
+extern Token *new_token(TokenType type, char *value);
 
 /**
  * @brief delete a token

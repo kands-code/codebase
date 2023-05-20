@@ -14,16 +14,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-Token *new_token(TokenType type, const char *value) {
-  is_null(value);
+Token *new_token(TokenType type, char *value) {
   // init: token
   Token *token = malloc(sizeof(Token));
   token->type = type;
-  // copy value to token
-  token->value = calloc(strlen(value) + 1, sizeof(char));
-  token->value = strncpy(token->value, value, strlen(value));
-  // keep value end with '\0'
-  token->value[strlen(value)] = '\0';
+  if (value != NULL) {
+    // copy value to token
+    token->value = value;
+  } else {
+    // no need value
+    token->value = NULL;
+  }
   // return: token
   return token;
 }
@@ -33,19 +34,15 @@ void drop_token(Token *token) {
   if (token == NULL) {
     return;
   }
-  // free all of token
-  free(token->value);
+  if (token->value != NULL) {
+    // free all of token
+    free(token->value);
+  }
   free(token);
 }
 
 char *get_token_type_name(TokenType type) {
   switch (type) {
-  case Seperator:
-    return "Seperator";
-  case Bind:
-    return "Bind";
-  case Simicolon:
-    return "Simicolon";
   case Identity:
     return "Identity";
   case IntegerLiteral:
@@ -54,6 +51,14 @@ char *get_token_type_name(TokenType type) {
     return "FloatLiteral";
   case StringLiteral:
     return "StringLiteral";
+  case Symbol:
+    return "Symbol";
+  case Bind:
+    return "Bind";
+  case Seperator:
+    return "Seperator";
+  case Simicolon:
+    return "Simicolon";
   case OpenParenthese:
     return "OpenParenthese";
   case CloseParenthese:
@@ -109,7 +114,7 @@ Token *get_num_token(const char *code, size_t *num_bias) {
     *num_bias += 1;
   }
   // construct number token
-  char *token_value = calloc(num_buffer_size, sizeof(char));
+  char *token_value = calloc(num_buffer_size + 1, sizeof(char));
   size_t value_cnt = 0;
   for (size_t i = 0; i < *num_bias && value_cnt < num_buffer_size; ++i) {
     char current_char = code[i];
@@ -127,72 +132,64 @@ Token *get_num_token(const char *code, size_t *num_bias) {
 }
 
 /**
- * @brief process identity in tokenization
+ * @brief get other token from code string
  *
  * @param[in] code the code to process
- * @param[in] ident_bias the bias of identity
- * @return the token of identity
+ * @param[in] ident_bias the bias of token
+ * @param[in] type the type of token
+ * @return the token
  */
-Token *get_ident_token(const char *code, size_t *ident_bias) {
+Token *get_other_token(const char *code, size_t *token_bias, TokenType type) {
   // boundary test: null pointer
   is_null(code);
-  is_null(ident_bias);
-  // scan identity
-  *ident_bias = 0;
-  while (*(code + *ident_bias) != '\0') {
-    char current_char = *(code + *ident_bias);
-    if (isdigit(current_char) || isalpha(current_char) || current_char == '_') {
+  is_null(token_bias);
+  // first scan
+  if (type == Identity) {
+    *token_bias = 0;
+  } else if (type == Symbol || type == StringLiteral) {
+    *token_bias = 1;
+  }
+  // for string check
+  bool is_ending = false;
+  while (*(code + *token_bias) != '\0') {
+    char current_char = *(code + *token_bias);
+    if (type == StringLiteral && current_char != '"') {
+      *token_bias += 1;
+    } else if (type == StringLiteral && current_char == '"') {
+      is_ending = true;
+      *token_bias += 1;
+      break;
+    } else if ((type == Identity || type == Symbol) &&
+               (isdigit(current_char) || isalpha(current_char) ||
+                current_char == '_')) {
       // ident := (`(A-Z)` | `(a-z)` | `(0-9)` | `_`)*
-      *ident_bias += 1;
+      *token_bias += 1;
     } else {
       // meet other character
       break;
     }
   }
-  // construct idenity token
-  char *token_value = calloc(*ident_bias + 1, sizeof(char));
-  for (size_t i = 0; i < *ident_bias; ++i) {
-    token_value[i] = code[i];
-  }
-  token_value[*ident_bias + 1] = '\0';
-  return new_token(Identity, token_value);
-}
-
-/**
- * @brief process string in tokenization
- *
- * @param[in] code the code to process
- * @param[in] ident_bias the bias of string
- * @return the token of string
- */
-Token *get_str_token(const char *code, size_t *str_bias) {
-  // boundary test: null pointer
-  is_null(code);
-  is_null(str_bias);
-  // scan identity
-  *str_bias = 0;
-  bool is_ending = false;
-  while (*(code + *str_bias) != '\0') {
-    char current_char = *(code + *str_bias);
-    *str_bias += 1;
-    if (current_char == '"') {
-      // meet ending
-      is_ending = true;
-      break;
-    }
-  }
-  // check ending
-  if (!is_ending) {
+  // check string ending
+  if (type == StringLiteral && !is_ending) {
     // no ending string
     log_error("panic: no ending string");
     return NULL;
   }
-  // construct string token
-  char *token_value = calloc(*str_bias, sizeof(char));
-  strncpy(token_value, code, *str_bias - 1);
-  token_value[*str_bias] = '\0';
-  // return: string token
-  return new_token(StringLiteral, token_value);
+  // construct token
+  char *token_value;
+  if (type == StringLiteral) {
+    token_value = calloc(*token_bias - 1, sizeof(char));
+    // remove double quote from string literal
+    strncpy(token_value, code + 1, *token_bias - 2);
+    token_value[*token_bias - 2] = '\0';
+  } else {
+    token_value = calloc(*token_bias + 1, sizeof(char));
+    for (size_t i = 0; i < *token_bias; ++i) {
+      token_value[i] = code[i];
+    }
+    token_value[*token_bias] = '\0';
+  }
+  return new_token(type, token_value);
 }
 
 Vector *tokenizer(const char *code) {
@@ -217,57 +214,59 @@ Vector *tokenizer(const char *code) {
       token = get_num_token(code + bias, &token_bias);
     } else if (isalpha(current_char)) {
       // try capture identity
-      token = get_ident_token(code + bias, &token_bias);
+      token = get_other_token(code + bias, &token_bias, Identity);
+    } else if (current_char == '#') {
+      // symbol start with `#`, for example, #true, #Pi
+      token = get_other_token(code + bias, &token_bias, Symbol);
     } else if (current_char == '"') {
       // start to capture string
-      bias += 1;
-      token = get_str_token(code + bias, &token_bias);
+      token = get_other_token(code + bias, &token_bias, StringLiteral);
     } else if (current_char == ':') {
       if (*(code + bias + 1) == '=') {
         // meet bind sign
         bias += 2;
-        append_to_vector(tokens, new_token(Bind, str_copy(":=")));
+        append_to_vector(tokens, new_token(Bind, NULL));
         continue;
       }
     } else if (current_char == '(') {
       // open parenthese
       bias += 1;
-      append_to_vector(tokens, new_token(OpenParenthese, str_copy("(")));
+      append_to_vector(tokens, new_token(OpenParenthese, NULL));
       continue;
     } else if (current_char == ')') {
       // close parenthese
       bias += 1;
-      append_to_vector(tokens, new_token(CloseParenthese, str_copy(")")));
+      append_to_vector(tokens, new_token(CloseParenthese, NULL));
       continue;
     } else if (current_char == '[') {
       // open function
       bias += 1;
-      append_to_vector(tokens, new_token(OpenFunction, str_copy("[")));
+      append_to_vector(tokens, new_token(OpenFunction, NULL));
       continue;
     } else if (current_char == ']') {
       // close function
       bias += 1;
-      append_to_vector(tokens, new_token(CloseFunction, str_copy("]")));
+      append_to_vector(tokens, new_token(CloseFunction, NULL));
       continue;
     } else if (current_char == '{') {
       // open list
       bias += 1;
-      append_to_vector(tokens, new_token(OpenList, str_copy("{")));
+      append_to_vector(tokens, new_token(OpenList, NULL));
       continue;
     } else if (current_char == '}') {
       // close list
       bias += 1;
-      append_to_vector(tokens, new_token(CloseList, str_copy("}")));
+      append_to_vector(tokens, new_token(CloseList, NULL));
       continue;
     } else if (current_char == ',') {
       // sperator
       bias += 1;
-      append_to_vector(tokens, new_token(Seperator, str_copy(",")));
+      append_to_vector(tokens, new_token(Seperator, NULL));
       continue;
     } else if (current_char == ';') {
       // simicolon
       bias += 1;
-      append_to_vector(tokens, new_token(Simicolon, str_copy(";")));
+      append_to_vector(tokens, new_token(Simicolon, NULL));
       continue;
     }
     // append token to tokens

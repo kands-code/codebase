@@ -155,7 +155,7 @@ void drop_vector(Vector *vector) {
   }
   // drop recursively
   VectorNode *current_node = vector->head_node;
-  for (size_t i = 0; i < vector->vector_length && current_node != NULL; ++i) {
+  while (current_node != NULL) {
     VectorNode *next_node = current_node->next_node;
     drop_token(current_node->token);
     free(current_node);
@@ -171,7 +171,9 @@ void show_vector_node(VectorNode *node, size_t nth) {
   // show node value
   printf("node[%zu]\n", nth);
   printf("  type: %s\n", get_token_type_name(node->token->type));
-  printf("  value: [%s]\n", node->token->value);
+  if (node->token->value != NULL) {
+    printf("  value: [%s]\n", node->token->value);
+  }
 }
 
 void show_vector(Vector *vector) {
@@ -182,5 +184,4 @@ void show_vector(Vector *vector) {
   for (size_t i = 1; i <= vector->vector_length; ++i) {
     show_vector_node(get_nth_of_vector(vector, i), i);
   }
-  puts("=== end ===");
 }

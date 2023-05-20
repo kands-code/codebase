@@ -53,6 +53,10 @@ char *get_token_type_name(TokenType type) {
     return "StringLiteral";
   case Symbol:
     return "Symbol";
+  case Type:
+    return "Type";
+  case TypecColon:
+    return "TypeColon";
   case Bind:
     return "Bind";
   case Seperator:
@@ -159,10 +163,14 @@ Token *get_other_token(const char *code, size_t *token_bias, TokenType type) {
       is_ending = true;
       *token_bias += 1;
       break;
+    } else if (type == Type &&
+               (isdigit(current_char) || islower(current_char))) {
+      // typ := (`(a-z)` | `(0-9)`)*
+      *token_bias += 1;
     } else if ((type == Identity || type == Symbol) &&
                (isdigit(current_char) || isalpha(current_char) ||
                 current_char == '_')) {
-      // ident := (`(A-Z)` | `(a-z)` | `(0-9)` | `_`)*
+      // ident | sym := (`(A-Z)` | `(a-z)` | `(0-9)` | `_`)*
       *token_bias += 1;
     } else {
       // meet other character
@@ -213,8 +221,12 @@ Vector *tokenizer(const char *code) {
       // if meet number, capture number
       token = get_num_token(code + bias, &token_bias);
     } else if (isalpha(current_char)) {
-      // try capture identity
-      token = get_other_token(code + bias, &token_bias, Identity);
+      // get type or ident token
+      token = get_other_token(code + bias, &token_bias,
+                              (tokens->tail_node != NULL &&
+                               tokens->tail_node->token->type == TypecColon)
+                                  ? Type
+                                  : Identity);
     } else if (current_char == '#') {
       // symbol start with `#`, for example, #true, #Pi
       token = get_other_token(code + bias, &token_bias, Symbol);
@@ -226,8 +238,12 @@ Vector *tokenizer(const char *code) {
         // meet bind sign
         bias += 2;
         append_to_vector(tokens, new_token(Bind, NULL));
-        continue;
+      } else {
+        // meet type colon
+        bias += 1;
+        append_to_vector(tokens, new_token(TypecColon, NULL));
       }
+      continue;
     } else if (current_char == '(') {
       // open parenthese
       bias += 1;

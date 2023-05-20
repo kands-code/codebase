@@ -28,6 +28,8 @@ typedef enum TokenType {
   FloatLiteral,    ///< literal of floating-point number
   StringLiteral,   ///< literal of string
   Symbol,          ///< symbol
+  Type,            ///< type
+  TypecColon,      ///< `:` before type
   Bind,            ///< bind operator `:=`
   Seperator,       ///< seperator `,`
   Simicolon,       ///< simicolon `;`

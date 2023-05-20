@@ -221,12 +221,13 @@ Vector *tokenizer(const char *code) {
       // if meet number, capture number
       token = get_num_token(code + bias, &token_bias);
     } else if (isalpha(current_char)) {
-      // get type or ident token
-      token = get_other_token(code + bias, &token_bias,
-                              (tokens->tail_node != NULL &&
-                               tokens->tail_node->token->type == TypecColon)
-                                  ? Type
-                                  : Identity);
+      if (tokens->tail_node != NULL &&
+          tokens->tail_node->token->type == TypecColon) {
+        token = get_other_token(code + bias, &token_bias, Type);
+      } else {
+        // get type or ident token
+        token = get_other_token(code + bias, &token_bias, Identity);
+      }
     } else if (current_char == '#') {
       // symbol start with `#`, for example, #true, #Pi
       token = get_other_token(code + bias, &token_bias, Symbol);

@@ -3,7 +3,7 @@
 #include "ksl/vector.h"
 
 int main(void) {
-  Vector *tokens = tokenizer("f[x: u8] := Add[x, 10]");
+  Vector *tokens = tokenizer("f[x: u8] := Add[x, 10]; (* Comment *) x := 10;");
   if (tokens == NULL) {
     log_warn("tokenizer failed");
   } else {

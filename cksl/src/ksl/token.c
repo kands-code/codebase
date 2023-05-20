@@ -163,9 +163,8 @@ Token *get_other_token(const char *code, size_t *token_bias, TokenType type) {
       is_ending = true;
       *token_bias += 1;
       break;
-    } else if (type == Type &&
-               (isdigit(current_char) || islower(current_char))) {
-      // typ := (`(a-z)` | `(0-9)`)*
+    } else if (type == Type && isalnum(current_char)) {
+      // typ := [a-zA-Z]*
       *token_bias += 1;
     } else if ((type == Identity || type == Symbol) &&
                (isdigit(current_char) || isalpha(current_char) ||
@@ -200,6 +199,30 @@ Token *get_other_token(const char *code, size_t *token_bias, TokenType type) {
   return new_token(type, token_value);
 }
 
+/**
+ * @brief omit comments in code
+ *
+ * @param[in] code the code
+ * @param[in] comment_bias bias of comment
+ */
+void omit_comment(const char *code, size_t *comment_bias) {
+  // boundary test: null pointer
+  is_null(code);
+  is_null(comment_bias);
+  // try match end of comment
+  *comment_bias = 2;
+  while (*(code + *comment_bias) != '\0') {
+    char current_char = *(code + *comment_bias);
+    char next_char = *(code + *comment_bias + 1);
+    // meet end of comment
+    if (current_char == '*' && next_char != '\0' && next_char == ')') {
+      *comment_bias += 2;
+      return;
+    }
+    *comment_bias += 1;
+  }
+}
+
 Vector *tokenizer(const char *code) {
   // boundary test: null pointer
   is_null(code);
@@ -223,9 +246,10 @@ Vector *tokenizer(const char *code) {
     } else if (isalpha(current_char)) {
       if (tokens->tail_node != NULL &&
           tokens->tail_node->token->type == TypecColon) {
+        // get type token
         token = get_other_token(code + bias, &token_bias, Type);
       } else {
-        // get type or ident token
+        // get ident token
         token = get_other_token(code + bias, &token_bias, Identity);
       }
     } else if (current_char == '#') {
@@ -246,9 +270,16 @@ Vector *tokenizer(const char *code) {
       }
       continue;
     } else if (current_char == '(') {
-      // open parenthese
-      bias += 1;
-      append_to_vector(tokens, new_token(OpenParenthese, NULL));
+      if (*(code + bias + 1) == '*') {
+        // omit comment
+        size_t comment_bias = 0;
+        omit_comment(code + bias, &comment_bias);
+        bias += comment_bias;
+      } else {
+        // open parenthese
+        bias += 1;
+        append_to_vector(tokens, new_token(OpenParenthese, NULL));
+      }
       continue;
     } else if (current_char == ')') {
       // close parenthese

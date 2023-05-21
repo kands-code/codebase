@@ -67,6 +67,14 @@ new_vector_type(Token);
 extern Token *new_Token(TokenType type, char *value);
 
 /**
+ * @brief get a copy of token
+ *
+ * @param[in] tok the token to copy
+ * @return the copy of \p tok
+ */
+extern Token *copy_Token(Token *tok);
+
+/**
  * @brief delete a token
  *
  * @param[in] tok the token to drop
@@ -77,9 +85,9 @@ extern void drop_Token(Token *tok);
  * @brief show token
  *
  * @param[in] tok the token to show
- * @param[in] ident indent before content
+ * @param[in] indent indent before content
  */
-extern void show_Token(Token *tok, size_t indet);
+extern void show_Token(Token *tok, size_t indent);
 
 /**
  * @brief get the name of each token type

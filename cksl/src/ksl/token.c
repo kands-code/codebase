@@ -33,6 +33,17 @@ Token *new_Token(TokenType type, char *value) {
   return tok;
 }
 
+Token *copy_Token(Token *tok) {
+  // boundary test: null token
+  is_null(tok);
+  if (tok->value == NULL) {
+    return new_Token(tok->type, NULL);
+  } else {
+    // make a copy of a string
+    return new_Token(tok->type, str_copy(tok->value));
+  }
+}
+
 void drop_Token(Token *tok) {
   // if token is already null, do nothing
   if (tok == NULL) {
@@ -45,13 +56,13 @@ void drop_Token(Token *tok) {
   free(tok);
 }
 
-void show_token(Token *tok, size_t ident) {
-  for (size_t i = 0; i < ident; ++i) {
+void show_Token(Token *tok, size_t indent) {
+  for (size_t i = 0; i < indent; ++i) {
     putchar('\t');
   }
   printf("Token Type: %s\n", get_TokenType(tok->type));
   if (tok->value != NULL) {
-    for (size_t i = 0; i < ident; ++i) {
+    for (size_t i = 0; i < indent; ++i) {
       putchar('\t');
     }
     printf("Token Value: %s\n", tok->value);

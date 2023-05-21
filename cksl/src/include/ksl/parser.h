@@ -14,15 +14,15 @@
 
 // types
 
-typedef struct expression {
+typedef struct Expression {
 
-} expression;
+} Expression;
 
 //! use vector
-new_vector_type(expression);
+new_vector_type(Expression);
 
 // functions: parser
 
-extern void show_expression(expression expr, size_t indent);
+extern void show_Expression(Expression expr, size_t indent);
 
 #endif

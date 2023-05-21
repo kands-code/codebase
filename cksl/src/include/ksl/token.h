@@ -17,7 +17,7 @@
 /**
  * @brief types of token
  */
-typedef enum tokenType {
+typedef enum TokenType {
   Identity,          ///< identity
   IntegerLiteral,    ///< literal of integer
   FloatLiteral,      ///< literal of floating-point number
@@ -42,18 +42,18 @@ typedef enum tokenType {
   CloseFunction,     ///< stop function `]`
   OpenList,          ///< start list `{`
   CloseList,         ///< stop list `}`
-} tokenType;
+} TokenType;
 
 /**
  * @brief token of KSL
  */
-typedef struct token {
-  tokenType type; ///< type of token
+typedef struct Token {
+  TokenType type; ///< type of token
   char *value;    ///< value of token
-} token;
+} Token;
 
 //! use vector
-new_vector_type(token);
+new_vector_type(Token);
 
 // functions: token
 
@@ -64,14 +64,14 @@ new_vector_type(token);
  * @param[in] value the value of token
  * @return the token with \p type and \p value
  */
-extern token *new_token(tokenType type, char *value);
+extern Token *new_Token(TokenType type, char *value);
 
 /**
  * @brief delete a token
  *
  * @param[in] tok the token to drop
  */
-extern void drop_token(token *tok);
+extern void drop_Token(Token *tok);
 
 /**
  * @brief show token
@@ -79,7 +79,7 @@ extern void drop_token(token *tok);
  * @param[in] tok the token to show
  * @param[in] ident indent before content
  */
-extern void show_token(token *tok, size_t indet);
+extern void show_Token(Token *tok, size_t indet);
 
 /**
  * @brief get the name of each token type
@@ -87,7 +87,7 @@ extern void show_token(token *tok, size_t indet);
  * @param[in] type the token type
  * @return the name of \p type
  */
-extern char *get_token_type_name(tokenType type);
+extern char *get_TokenType(TokenType type);
 
 /**
  * @brief tokenize the code
@@ -95,6 +95,6 @@ extern char *get_token_type_name(tokenType type);
  * @param[in] code the code to parser
  * @return tokens
  */
-extern vector_token *tokenizer(const char *code);
+extern vector_Token *tokenizer(const char *code);
 
 #endif

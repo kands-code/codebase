@@ -16,11 +16,11 @@
 #include <string.h>
 
 //! use vector
-impl_vector_type(token);
+impl_vector_type(Token);
 
-token *new_token(tokenType type, char *value) {
+Token *new_Token(TokenType type, char *value) {
   // init: token
-  token *tok = malloc(sizeof(token));
+  Token *tok = malloc(sizeof(Token));
   tok->type = type;
   if (value != NULL) {
     // copy value to token
@@ -33,7 +33,7 @@ token *new_token(tokenType type, char *value) {
   return tok;
 }
 
-void drop_token(token *tok) {
+void drop_Token(Token *tok) {
   // if token is already null, do nothing
   if (tok == NULL) {
     return;
@@ -45,11 +45,11 @@ void drop_token(token *tok) {
   free(tok);
 }
 
-void show_token(token *tok, size_t ident) {
+void show_token(Token *tok, size_t ident) {
   for (size_t i = 0; i < ident; ++i) {
     putchar('\t');
   }
-  printf("Token Type: %s\n", get_token_type_name(tok->type));
+  printf("Token Type: %s\n", get_TokenType(tok->type));
   if (tok->value != NULL) {
     for (size_t i = 0; i < ident; ++i) {
       putchar('\t');
@@ -58,7 +58,7 @@ void show_token(token *tok, size_t ident) {
   }
 }
 
-char *get_token_type_name(tokenType type) {
+char *get_TokenType(TokenType type) {
   switch (type) {
   case Identity:
     return "Identity";
@@ -121,7 +121,7 @@ char *get_token_type_name(tokenType type) {
  * @param[in] num_bias the bias of number
  * @return the token of number
  */
-token *get_num_token(const char *code, size_t *num_bias) {
+Token *get_num_token(const char *code, size_t *num_bias) {
   // boundary test: null pointer
   is_null(code);
   is_null(num_bias);
@@ -164,7 +164,7 @@ token *get_num_token(const char *code, size_t *num_bias) {
   }
   token_value[num_buffer_size] = '\0';
   // return: number token
-  return new_token(is_floating_point_number ? FloatLiteral : IntegerLiteral,
+  return new_Token(is_floating_point_number ? FloatLiteral : IntegerLiteral,
                    token_value);
 }
 
@@ -176,7 +176,7 @@ token *get_num_token(const char *code, size_t *num_bias) {
  * @param[in] type the type of token
  * @return the token
  */
-token *get_other_token(const char *code, size_t *tok_bias, tokenType type) {
+Token *get_other_token(const char *code, size_t *tok_bias, TokenType type) {
   // boundary test: null pointer
   is_null(code);
   is_null(tok_bias);
@@ -229,7 +229,7 @@ token *get_other_token(const char *code, size_t *tok_bias, tokenType type) {
     }
     tok_value[*tok_bias] = '\0';
   }
-  return new_token(type, tok_value);
+  return new_Token(type, tok_value);
 }
 
 /**
@@ -256,11 +256,11 @@ void omit_comment(const char *code, size_t *comment_bias) {
   }
 }
 
-vector_token *tokenizer(const char *code) {
+vector_Token *tokenizer(const char *code) {
   // boundary test: null pointer
   is_null(code);
   // start tokenize
-  vector_token *tokens = new_vector_token();
+  vector_Token *tokens = new_vector_Token();
   // iter all char of code
   size_t bias = 0;
   while (*(code + bias) != '\0') {
@@ -268,7 +268,7 @@ vector_token *tokenizer(const char *code) {
     char next_char = *(code + bias + 1);
     // init: token
     size_t tok_bias = 0;
-    token *tok = NULL;
+    Token *tok = NULL;
     // check current char
     if (isblank(current_char) || current_char == '\n') {
       // omit all black characters
@@ -289,43 +289,43 @@ vector_token *tokenizer(const char *code) {
     } else if (current_char == '|') {
       // meet expression combine
       bias += 1;
-      append_to_vector_token(tokens, new_token(ExpressionCombine, NULL));
+      append_to_vector_Token(tokens, new_Token(ExpressionCombine, NULL));
       continue;
     } else if (current_char == '=') {
       // meet struct bind
       bias += 1;
-      append_to_vector_token(tokens, new_token(StructBind, NULL));
+      append_to_vector_Token(tokens, new_Token(StructBind, NULL));
       continue;
     } else if (current_char == '+') {
       // meet addition sign
       bias += 1;
-      append_to_vector_token(tokens, new_token(AddOps, NULL));
+      append_to_vector_Token(tokens, new_Token(AddOps, NULL));
       continue;
     } else if (current_char == '*') {
       // meet multiplication sign
       bias += 1;
-      append_to_vector_token(tokens, new_token(MulOps, NULL));
+      append_to_vector_Token(tokens, new_Token(MulOps, NULL));
       continue;
     } else if (current_char == '-') {
       if (next_char == '>') {
         // meet strcut get
         bias += 2;
-        append_to_vector_token(tokens, new_token(StructGet, NULL));
+        append_to_vector_Token(tokens, new_Token(StructGet, NULL));
       } else {
         // meet substraction sign
         bias += 1;
-        append_to_vector_token(tokens, new_token(SubOps, NULL));
+        append_to_vector_Token(tokens, new_Token(SubOps, NULL));
       }
       continue;
     } else if (current_char == '/') {
       // meet division sign
       bias += 1;
-      append_to_vector_token(tokens, new_token(DivOps, NULL));
+      append_to_vector_Token(tokens, new_Token(DivOps, NULL));
       continue;
     } else if (current_char == '^') {
       // meet power sign
       bias += 1;
-      append_to_vector_token(tokens, new_token(PowOps, NULL));
+      append_to_vector_Token(tokens, new_Token(PowOps, NULL));
       continue;
     } else if (current_char == '#') {
       // symbol start with `#`, for example, #true, #Pi
@@ -337,11 +337,11 @@ vector_token *tokenizer(const char *code) {
       if (next_char == '=') {
         // meet bind sign
         bias += 2;
-        append_to_vector_token(tokens, new_token(Bind, NULL));
+        append_to_vector_Token(tokens, new_Token(Bind, NULL));
       } else {
         // meet type colon
         bias += 1;
-        append_to_vector_token(tokens, new_token(TypecColon, NULL));
+        append_to_vector_Token(tokens, new_Token(TypecColon, NULL));
       }
       continue;
     } else if (current_char == '(') {
@@ -352,52 +352,52 @@ vector_token *tokenizer(const char *code) {
         bias += comment_bias;
       } else {
         bias += 1;
-        append_to_vector_token(tokens, new_token(OpenParenthese, NULL));
+        append_to_vector_Token(tokens, new_Token(OpenParenthese, NULL));
       }
       continue;
     } else if (current_char == ')') {
       bias += 1;
-      append_to_vector_token(tokens, new_token(CloseParenthese, NULL));
+      append_to_vector_Token(tokens, new_Token(CloseParenthese, NULL));
       continue;
     } else if (current_char == '[') {
       // open function
       bias += 1;
-      append_to_vector_token(tokens, new_token(OpenFunction, NULL));
+      append_to_vector_Token(tokens, new_Token(OpenFunction, NULL));
       continue;
     } else if (current_char == ']') {
       // close function
       bias += 1;
-      append_to_vector_token(tokens, new_token(CloseFunction, NULL));
+      append_to_vector_Token(tokens, new_Token(CloseFunction, NULL));
       continue;
     } else if (current_char == '{') {
       // open list
       bias += 1;
-      append_to_vector_token(tokens, new_token(OpenList, NULL));
+      append_to_vector_Token(tokens, new_Token(OpenList, NULL));
       continue;
     } else if (current_char == '}') {
       // close list
       bias += 1;
-      append_to_vector_token(tokens, new_token(CloseList, NULL));
+      append_to_vector_Token(tokens, new_Token(CloseList, NULL));
       continue;
     } else if (current_char == ',') {
       // sperator
       bias += 1;
-      append_to_vector_token(tokens, new_token(Seperator, NULL));
+      append_to_vector_Token(tokens, new_Token(Seperator, NULL));
       continue;
     } else if (current_char == ';') {
       // simicolon
       bias += 1;
-      append_to_vector_token(tokens, new_token(Simicolon, NULL));
+      append_to_vector_Token(tokens, new_Token(Simicolon, NULL));
       continue;
     }
     // append token to tokens
     if (tok == NULL) {
       // failed to get number token
-      drop_vector_token(tokens);
+      drop_vector_Token(tokens);
       return NULL;
     } else {
       // append to tokens
-      append_to_vector_token(tokens, tok);
+      append_to_vector_Token(tokens, tok);
       // add token bias to bias
       bias += tok_bias;
     }

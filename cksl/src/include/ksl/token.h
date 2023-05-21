@@ -23,22 +23,30 @@ typedef struct Vector Vector;
  * @brief types of token
  */
 typedef enum TokenType {
-  Identity,        ///< identity
-  IntegerLiteral,  ///< literal of integer
-  FloatLiteral,    ///< literal of floating-point number
-  StringLiteral,   ///< literal of string
-  Symbol,          ///< symbol
-  Type,            ///< type
-  TypecColon,      ///< `:` before type
-  Bind,            ///< bind operator `:=`
-  Seperator,       ///< seperator `,`
-  Simicolon,       ///< simicolon `;`
-  OpenParenthese,  ///< open parenthese `(`
-  CloseParenthese, ///< close parenthese `)`
-  OpenFunction,    ///< start function `[`
-  CloseFunction,   ///< stop function `]`
-  OpenList,        ///< start list `{`
-  CloseList,       ///< stop list `}`
+  Identity,          ///< identity
+  IntegerLiteral,    ///< literal of integer
+  FloatLiteral,      ///< literal of floating-point number
+  StringLiteral,     ///< literal of string
+  Symbol,            ///< symbol
+  Type,              ///< type
+  TypecColon,        ///< `:` before type
+  Bind,              ///< bind operator `:=`
+  StructBind,        ///< bind sign in struct `=`
+  StructGet,         ///< get sign of struct `->`
+  AddOps,            ///< addition sign `+`
+  SubOps,            ///< subtraction sign `-`
+  MulOps,            ///< multiplication sign `*`
+  DivOps,            ///< division sign `/`
+  PowOps,            ///< power sign `^`
+  Seperator,         ///< seperator `,`
+  Simicolon,         ///< simicolon `;`
+  ExpressionCombine, ///< combine of expression `|`
+  OpenParenthese,    ///< start parenthese `(`
+  CloseParenthese,   ///< stop parenthese `)`
+  OpenFunction,      ///< start function `[`
+  CloseFunction,     ///< stop function `]`
+  OpenList,          ///< start list `{`
+  CloseList,         ///< stop list `}`
 } TokenType;
 
 /**

@@ -33,7 +33,7 @@ Print[F[1, 0.4, " yes"]]; (* => "1 yes" *)
 (* only list like type support, access by Get and Ident *)
 TypeBind[SelfType, { x: Integer, y: Integer }];
 
-p: SelfType = { x := 10, y := 20 };
+p: SelfType := { x := 10, y := 20 };
 
 Print[Get[p, x] + Get[p, y]]; (* => 30 *)
 ```

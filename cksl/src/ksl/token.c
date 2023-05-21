@@ -59,10 +59,26 @@ char *get_token_type_name(TokenType type) {
     return "TypeColon";
   case Bind:
     return "Bind";
+  case StructBind:
+    return "StructBind";
+  case StructGet:
+    return "StructGet";
+  case AddOps:
+    return "AddOps";
+  case SubOps:
+    return "SubOps";
+  case MulOps:
+    return "MulOps";
+  case DivOps:
+    return "DivOps";
+  case PowOps:
+    return "PowOps";
   case Seperator:
     return "Seperator";
   case Simicolon:
     return "Simicolon";
+  case ExpressionCombine:
+    return "ExpressionCombine";
   case OpenParenthese:
     return "OpenParenthese";
   case CloseParenthese:
@@ -215,7 +231,7 @@ void omit_comment(const char *code, size_t *comment_bias) {
     char current_char = *(code + *comment_bias);
     char next_char = *(code + *comment_bias + 1);
     // meet end of comment
-    if (current_char == '*' && next_char != '\0' && next_char == ')') {
+    if (current_char == '*' && next_char == ')') {
       *comment_bias += 2;
       return;
     }
@@ -232,11 +248,12 @@ Vector *tokenizer(const char *code) {
   size_t bias = 0;
   while (*(code + bias) != '\0') {
     char current_char = *(code + bias);
+    char next_char = *(code + bias + 1);
     // init: token
     size_t token_bias = 0;
     Token *token = NULL;
     // check current char
-    if (isblank(current_char)) {
+    if (isblank(current_char) || current_char == '\n') {
       // omit all black characters
       bias += 1;
       continue;
@@ -252,6 +269,47 @@ Vector *tokenizer(const char *code) {
         // get ident token
         token = get_other_token(code + bias, &token_bias, Identity);
       }
+    } else if (current_char == '|') {
+      // meet expression combine
+      bias += 1;
+      append_to_vector(tokens, new_token(ExpressionCombine, NULL));
+      continue;
+    } else if (current_char == '=') {
+      // meet struct bind
+      bias += 1;
+      append_to_vector(tokens, new_token(StructBind, NULL));
+      continue;
+    } else if (current_char == '+') {
+      // meet addition sign
+      bias += 1;
+      append_to_vector(tokens, new_token(AddOps, NULL));
+      continue;
+    } else if (current_char == '*') {
+      // meet multiplication sign
+      bias += 1;
+      append_to_vector(tokens, new_token(MulOps, NULL));
+      continue;
+    } else if (current_char == '-') {
+      if (next_char == '>') {
+        // meet strcut get
+        bias += 2;
+        append_to_vector(tokens, new_token(StructGet, NULL));
+      } else {
+        // meet substraction sign
+        bias += 1;
+        append_to_vector(tokens, new_token(SubOps, NULL));
+      }
+      continue;
+    } else if (current_char == '/') {
+      // meet division sign
+      bias += 1;
+      append_to_vector(tokens, new_token(DivOps, NULL));
+      continue;
+    } else if (current_char == '^') {
+      // meet power sign
+      bias += 1;
+      append_to_vector(tokens, new_token(PowOps, NULL));
+      continue;
     } else if (current_char == '#') {
       // symbol start with `#`, for example, #true, #Pi
       token = get_other_token(code + bias, &token_bias, Symbol);
@@ -259,7 +317,7 @@ Vector *tokenizer(const char *code) {
       // start to capture string
       token = get_other_token(code + bias, &token_bias, StringLiteral);
     } else if (current_char == ':') {
-      if (*(code + bias + 1) == '=') {
+      if (next_char == '=') {
         // meet bind sign
         bias += 2;
         append_to_vector(tokens, new_token(Bind, NULL));
@@ -270,19 +328,17 @@ Vector *tokenizer(const char *code) {
       }
       continue;
     } else if (current_char == '(') {
+      // omit comment
       if (*(code + bias + 1) == '*') {
-        // omit comment
         size_t comment_bias = 0;
         omit_comment(code + bias, &comment_bias);
         bias += comment_bias;
       } else {
-        // open parenthese
         bias += 1;
         append_to_vector(tokens, new_token(OpenParenthese, NULL));
       }
       continue;
     } else if (current_char == ')') {
-      // close parenthese
       bias += 1;
       append_to_vector(tokens, new_token(CloseParenthese, NULL));
       continue;

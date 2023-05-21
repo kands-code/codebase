@@ -11,37 +11,54 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-Token *new_token(TokenType type, char *value) {
+//! use vector
+impl_vector_type(token);
+
+token *new_token(tokenType type, char *value) {
   // init: token
-  Token *token = malloc(sizeof(Token));
-  token->type = type;
+  token *tok = malloc(sizeof(token));
+  tok->type = type;
   if (value != NULL) {
     // copy value to token
-    token->value = value;
+    tok->value = value;
   } else {
     // no need value
-    token->value = NULL;
+    tok->value = NULL;
   }
   // return: token
-  return token;
+  return tok;
 }
 
-void drop_token(Token *token) {
+void drop_token(token *tok) {
   // if token is already null, do nothing
-  if (token == NULL) {
+  if (tok == NULL) {
     return;
   }
-  if (token->value != NULL) {
+  if (tok->value != NULL) {
     // free all of token
-    free(token->value);
+    free(tok->value);
   }
-  free(token);
+  free(tok);
 }
 
-char *get_token_type_name(TokenType type) {
+void show_token(token *tok, size_t ident) {
+  for (size_t i = 0; i < ident; ++i) {
+    putchar('\t');
+  }
+  printf("Token Type: %s\n", get_token_type_name(tok->type));
+  if (tok->value != NULL) {
+    for (size_t i = 0; i < ident; ++i) {
+      putchar('\t');
+    }
+    printf("Token Value: %s\n", tok->value);
+  }
+}
+
+char *get_token_type_name(tokenType type) {
   switch (type) {
   case Identity:
     return "Identity";
@@ -104,7 +121,7 @@ char *get_token_type_name(TokenType type) {
  * @param[in] num_bias the bias of number
  * @return the token of number
  */
-Token *get_num_token(const char *code, size_t *num_bias) {
+token *get_num_token(const char *code, size_t *num_bias) {
   // boundary test: null pointer
   is_null(code);
   is_null(num_bias);
@@ -159,34 +176,34 @@ Token *get_num_token(const char *code, size_t *num_bias) {
  * @param[in] type the type of token
  * @return the token
  */
-Token *get_other_token(const char *code, size_t *token_bias, TokenType type) {
+token *get_other_token(const char *code, size_t *tok_bias, tokenType type) {
   // boundary test: null pointer
   is_null(code);
-  is_null(token_bias);
+  is_null(tok_bias);
   // first scan
   if (type == Identity) {
-    *token_bias = 0;
+    *tok_bias = 0;
   } else if (type == Symbol || type == StringLiteral) {
-    *token_bias = 1;
+    *tok_bias = 1;
   }
   // for string check
   bool is_ending = false;
-  while (*(code + *token_bias) != '\0') {
-    char current_char = *(code + *token_bias);
+  while (*(code + *tok_bias) != '\0') {
+    char current_char = *(code + *tok_bias);
     if (type == StringLiteral && current_char != '"') {
-      *token_bias += 1;
+      *tok_bias += 1;
     } else if (type == StringLiteral && current_char == '"') {
       is_ending = true;
-      *token_bias += 1;
+      *tok_bias += 1;
       break;
     } else if (type == Type && isalnum(current_char)) {
       // typ := [a-zA-Z]*
-      *token_bias += 1;
+      *tok_bias += 1;
     } else if ((type == Identity || type == Symbol) &&
                (isdigit(current_char) || isalpha(current_char) ||
                 current_char == '_')) {
       // ident | sym := (`(A-Z)` | `(a-z)` | `(0-9)` | `_`)*
-      *token_bias += 1;
+      *tok_bias += 1;
     } else {
       // meet other character
       break;
@@ -199,20 +216,20 @@ Token *get_other_token(const char *code, size_t *token_bias, TokenType type) {
     return NULL;
   }
   // construct token
-  char *token_value;
+  char *tok_value;
   if (type == StringLiteral) {
-    token_value = calloc(*token_bias - 1, sizeof(char));
+    tok_value = calloc(*tok_bias - 1, sizeof(char));
     // remove double quote from string literal
-    strncpy(token_value, code + 1, *token_bias - 2);
-    token_value[*token_bias - 2] = '\0';
+    strncpy(tok_value, code + 1, *tok_bias - 2);
+    tok_value[*tok_bias - 2] = '\0';
   } else {
-    token_value = calloc(*token_bias + 1, sizeof(char));
-    for (size_t i = 0; i < *token_bias; ++i) {
-      token_value[i] = code[i];
+    tok_value = calloc(*tok_bias + 1, sizeof(char));
+    for (size_t i = 0; i < *tok_bias; ++i) {
+      tok_value[i] = code[i];
     }
-    token_value[*token_bias] = '\0';
+    tok_value[*tok_bias] = '\0';
   }
-  return new_token(type, token_value);
+  return new_token(type, tok_value);
 }
 
 /**
@@ -239,19 +256,19 @@ void omit_comment(const char *code, size_t *comment_bias) {
   }
 }
 
-Vector *tokenizer(const char *code) {
+vector_token *tokenizer(const char *code) {
   // boundary test: null pointer
   is_null(code);
   // start tokenize
-  Vector *tokens = new_vector();
+  vector_token *tokens = new_vector_token();
   // iter all char of code
   size_t bias = 0;
   while (*(code + bias) != '\0') {
     char current_char = *(code + bias);
     char next_char = *(code + bias + 1);
     // init: token
-    size_t token_bias = 0;
-    Token *token = NULL;
+    size_t tok_bias = 0;
+    token *tok = NULL;
     // check current char
     if (isblank(current_char) || current_char == '\n') {
       // omit all black characters
@@ -259,72 +276,72 @@ Vector *tokenizer(const char *code) {
       continue;
     } else if (isdigit(current_char)) {
       // if meet number, capture number
-      token = get_num_token(code + bias, &token_bias);
+      tok = get_num_token(code + bias, &tok_bias);
     } else if (isalpha(current_char)) {
       if (tokens->tail_node != NULL &&
-          tokens->tail_node->token->type == TypecColon) {
+          tokens->tail_node->value->type == TypecColon) {
         // get type token
-        token = get_other_token(code + bias, &token_bias, Type);
+        tok = get_other_token(code + bias, &tok_bias, Type);
       } else {
         // get ident token
-        token = get_other_token(code + bias, &token_bias, Identity);
+        tok = get_other_token(code + bias, &tok_bias, Identity);
       }
     } else if (current_char == '|') {
       // meet expression combine
       bias += 1;
-      append_to_vector(tokens, new_token(ExpressionCombine, NULL));
+      append_to_vector_token(tokens, new_token(ExpressionCombine, NULL));
       continue;
     } else if (current_char == '=') {
       // meet struct bind
       bias += 1;
-      append_to_vector(tokens, new_token(StructBind, NULL));
+      append_to_vector_token(tokens, new_token(StructBind, NULL));
       continue;
     } else if (current_char == '+') {
       // meet addition sign
       bias += 1;
-      append_to_vector(tokens, new_token(AddOps, NULL));
+      append_to_vector_token(tokens, new_token(AddOps, NULL));
       continue;
     } else if (current_char == '*') {
       // meet multiplication sign
       bias += 1;
-      append_to_vector(tokens, new_token(MulOps, NULL));
+      append_to_vector_token(tokens, new_token(MulOps, NULL));
       continue;
     } else if (current_char == '-') {
       if (next_char == '>') {
         // meet strcut get
         bias += 2;
-        append_to_vector(tokens, new_token(StructGet, NULL));
+        append_to_vector_token(tokens, new_token(StructGet, NULL));
       } else {
         // meet substraction sign
         bias += 1;
-        append_to_vector(tokens, new_token(SubOps, NULL));
+        append_to_vector_token(tokens, new_token(SubOps, NULL));
       }
       continue;
     } else if (current_char == '/') {
       // meet division sign
       bias += 1;
-      append_to_vector(tokens, new_token(DivOps, NULL));
+      append_to_vector_token(tokens, new_token(DivOps, NULL));
       continue;
     } else if (current_char == '^') {
       // meet power sign
       bias += 1;
-      append_to_vector(tokens, new_token(PowOps, NULL));
+      append_to_vector_token(tokens, new_token(PowOps, NULL));
       continue;
     } else if (current_char == '#') {
       // symbol start with `#`, for example, #true, #Pi
-      token = get_other_token(code + bias, &token_bias, Symbol);
+      tok = get_other_token(code + bias, &tok_bias, Symbol);
     } else if (current_char == '"') {
       // start to capture string
-      token = get_other_token(code + bias, &token_bias, StringLiteral);
+      tok = get_other_token(code + bias, &tok_bias, StringLiteral);
     } else if (current_char == ':') {
       if (next_char == '=') {
         // meet bind sign
         bias += 2;
-        append_to_vector(tokens, new_token(Bind, NULL));
+        append_to_vector_token(tokens, new_token(Bind, NULL));
       } else {
         // meet type colon
         bias += 1;
-        append_to_vector(tokens, new_token(TypecColon, NULL));
+        append_to_vector_token(tokens, new_token(TypecColon, NULL));
       }
       continue;
     } else if (current_char == '(') {
@@ -335,54 +352,54 @@ Vector *tokenizer(const char *code) {
         bias += comment_bias;
       } else {
         bias += 1;
-        append_to_vector(tokens, new_token(OpenParenthese, NULL));
+        append_to_vector_token(tokens, new_token(OpenParenthese, NULL));
       }
       continue;
     } else if (current_char == ')') {
       bias += 1;
-      append_to_vector(tokens, new_token(CloseParenthese, NULL));
+      append_to_vector_token(tokens, new_token(CloseParenthese, NULL));
       continue;
     } else if (current_char == '[') {
       // open function
       bias += 1;
-      append_to_vector(tokens, new_token(OpenFunction, NULL));
+      append_to_vector_token(tokens, new_token(OpenFunction, NULL));
       continue;
     } else if (current_char == ']') {
       // close function
       bias += 1;
-      append_to_vector(tokens, new_token(CloseFunction, NULL));
+      append_to_vector_token(tokens, new_token(CloseFunction, NULL));
       continue;
     } else if (current_char == '{') {
       // open list
       bias += 1;
-      append_to_vector(tokens, new_token(OpenList, NULL));
+      append_to_vector_token(tokens, new_token(OpenList, NULL));
       continue;
     } else if (current_char == '}') {
       // close list
       bias += 1;
-      append_to_vector(tokens, new_token(CloseList, NULL));
+      append_to_vector_token(tokens, new_token(CloseList, NULL));
       continue;
     } else if (current_char == ',') {
       // sperator
       bias += 1;
-      append_to_vector(tokens, new_token(Seperator, NULL));
+      append_to_vector_token(tokens, new_token(Seperator, NULL));
       continue;
     } else if (current_char == ';') {
       // simicolon
       bias += 1;
-      append_to_vector(tokens, new_token(Simicolon, NULL));
+      append_to_vector_token(tokens, new_token(Simicolon, NULL));
       continue;
     }
     // append token to tokens
-    if (token == NULL) {
+    if (tok == NULL) {
       // failed to get number token
-      drop_vector(tokens);
+      drop_vector_token(tokens);
       return NULL;
     } else {
       // append to tokens
-      append_to_vector(tokens, token);
+      append_to_vector_token(tokens, tok);
       // add token bias to bias
-      bias += token_bias;
+      bias += tok_bias;
     }
   }
   // return: tokens

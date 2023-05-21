@@ -4,6 +4,7 @@
  */
 
 #pragma once
+#include <stddef.h>
 #ifndef __KSL_TOKEN_H__
 #define __KSL_TOKEN_H__
 
@@ -13,16 +14,10 @@
 
 // types
 
-// type declares
-
-typedef struct Vector Vector;
-
-// type defines
-
 /**
  * @brief types of token
  */
-typedef enum TokenType {
+typedef enum tokenType {
   Identity,          ///< identity
   IntegerLiteral,    ///< literal of integer
   FloatLiteral,      ///< literal of floating-point number
@@ -47,15 +42,18 @@ typedef enum TokenType {
   CloseFunction,     ///< stop function `]`
   OpenList,          ///< start list `{`
   CloseList,         ///< stop list `}`
-} TokenType;
+} tokenType;
 
 /**
  * @brief token of KSL
  */
-typedef struct Token {
-  TokenType type; ///< type of token
+typedef struct token {
+  tokenType type; ///< type of token
   char *value;    ///< value of token
-} Token;
+} token;
+
+//! use vector
+new_vector_type(token);
 
 // functions: token
 
@@ -66,14 +64,22 @@ typedef struct Token {
  * @param[in] value the value of token
  * @return the token with \p type and \p value
  */
-extern Token *new_token(TokenType type, char *value);
+extern token *new_token(tokenType type, char *value);
 
 /**
  * @brief delete a token
  *
- * @param[in] toekn the token to drop
+ * @param[in] tok the token to drop
  */
-extern void drop_token(Token *token);
+extern void drop_token(token *tok);
+
+/**
+ * @brief show token
+ *
+ * @param[in] tok the token to show
+ * @param[in] ident indent before content
+ */
+extern void show_token(token *tok, size_t indet);
 
 /**
  * @brief get the name of each token type
@@ -81,7 +87,7 @@ extern void drop_token(Token *token);
  * @param[in] type the token type
  * @return the name of \p type
  */
-extern char *get_token_type_name(TokenType type);
+extern char *get_token_type_name(tokenType type);
 
 /**
  * @brief tokenize the code
@@ -89,6 +95,6 @@ extern char *get_token_type_name(TokenType type);
  * @param[in] code the code to parser
  * @return tokens
  */
-extern Vector *tokenizer(const char *code);
+extern vector_token *tokenizer(const char *code);
 
 #endif

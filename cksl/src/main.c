@@ -3,7 +3,7 @@
 #include "ksl/vector.h"
 
 int main(void) {
-  Vector *tokens =
+  vector_token *tokens =
       tokenizer("TypeBind[Point, { x : Float, y : Float }];\n"
                 "p: Point := { x = 2.1, y = 4.2 }; (* get point *)\n"
                 "LengthOfPoint[p: Point]: Float :="
@@ -13,8 +13,8 @@ int main(void) {
   if (tokens == NULL) {
     log_warn("tokenizer failed");
   } else {
-    show_vector(tokens);
-    drop_vector(tokens);
+    show_vector_token(tokens);
+    drop_vector_token(tokens);
   }
   return 0;
 }

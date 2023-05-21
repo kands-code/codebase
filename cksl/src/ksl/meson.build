@@ -1,6 +1,6 @@
 ksl_src = [
-  'vector.c',
   'token.c',
+  'parser.c',
   'utils.c',
 ]
 

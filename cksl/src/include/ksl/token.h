@@ -18,7 +18,7 @@
  * @brief types of token
  */
 typedef enum TokenType {
-  Identity,          ///< identity
+  Identifier,        ///< identifier
   IntegerLiteral,    ///< literal of integer
   FloatLiteral,      ///< literal of floating-point number
   StringLiteral,     ///< literal of string

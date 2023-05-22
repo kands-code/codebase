@@ -183,19 +183,13 @@
   void show_vector_node_##type(vector_node_##type *node, size_t nth,           \
                                size_t indent) {                                \
     is_null(node);                                                             \
-    for (size_t i = 0; i < indent; ++i) {                                      \
-      putchar('\t');                                                           \
-    }                                                                          \
-    printf("node {%zu}:\n", nth);                                              \
+    indent_printf(indent, "node {%zu}:", nth);                                 \
     show_##type(node->value, indent + 1);                                      \
   }                                                                            \
   void show_vector_##type(vector_##type *vector, size_t indent) {              \
     is_null(vector);                                                           \
-    for (size_t i = 0; i < indent; ++i) {                                      \
-      putchar('\t');                                                           \
-    }                                                                          \
     size_t vec_length = get_vector_length_##type(vector);                      \
-    printf("vector: %zu\n", vec_length);                                       \
+    indent_printf(indent, "vector: %zu", vec_length);                          \
     for (size_t i = 1; i <= vec_length; ++i) {                                 \
       show_vector_node_##type(get_nth_of_vector_##type(vector, i), i, indent); \
     }                                                                          \

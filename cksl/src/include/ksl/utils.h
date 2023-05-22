@@ -4,6 +4,7 @@
  */
 
 #pragma once
+#include <stddef.h>
 #ifndef __KSL_UTILS_H__
 #define __KSL_UTILS_H__
 
@@ -58,6 +59,15 @@ extern void log_warn(const char *message, ...);
  * @param[in] ... the params of the message
  */
 extern void log_error(const char *message, ...);
+
+/**
+ * @brief printf with some indent
+ *
+ * @param[in] indent the indent
+ * @param[in] message the message to print
+ * @param[in] ... the params of the message
+ */
+extern void indent_printf(size_t indent, const char *message, ...);
 
 // functions: utils
 

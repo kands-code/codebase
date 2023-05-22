@@ -88,9 +88,28 @@ void log_error(const char *message, ...) {
   va_end(args);
 }
 
+void indent_printf(size_t indent, const char *message, ...) {
+  // init: varying list of arguments
+  va_list args;
+  // start read varying list
+  va_start(args, message);
+  // prepare print message
+  char print_message[256];
+  vsprintf(print_message, message, args);
+  // print: message to stdout
+  for (size_t i = 0; i < indent; ++i) {
+    putchar('\t');
+  }
+  printf("%s\n", print_message);
+  // end: close varing list
+  va_end(args);
+}
+
 // functions: utils
 
 char *str_copy(const char *origin_string) {
+  // boundary test: null string
+  is_null(origin_string);
   // a short cut of copy a string
   size_t origin_string_length = strlen(origin_string);
   char *copy_string = calloc(origin_string_length + 1, sizeof(char));

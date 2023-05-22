@@ -57,22 +57,16 @@ void drop_Token(Token *tok) {
 }
 
 void show_Token(Token *tok, size_t indent) {
-  for (size_t i = 0; i < indent; ++i) {
-    putchar('\t');
-  }
-  printf("Token Type: %s\n", get_TokenType(tok->type));
+  indent_printf(indent, "Token Type: %s", get_TokenType(tok->type));
   if (tok->value != NULL) {
-    for (size_t i = 0; i < indent; ++i) {
-      putchar('\t');
-    }
-    printf("Token Value: %s\n", tok->value);
+    indent_printf(indent, "Token Value: %s", tok->value);
   }
 }
 
 char *get_TokenType(TokenType type) {
   switch (type) {
-  case Identity:
-    return "Identity";
+  case Identifier:
+    return "Identifier";
   case IntegerLiteral:
     return "IntegerLiteral";
   case FloatLiteral:
@@ -132,7 +126,7 @@ char *get_TokenType(TokenType type) {
  * @param[in] num_bias the bias of number
  * @return the token of number
  */
-Token *get_num_token(const char *code, size_t *num_bias) {
+static Token *get_num_token(const char *code, size_t *num_bias) {
   // boundary test: null pointer
   is_null(code);
   is_null(num_bias);
@@ -187,12 +181,13 @@ Token *get_num_token(const char *code, size_t *num_bias) {
  * @param[in] type the type of token
  * @return the token
  */
-Token *get_other_token(const char *code, size_t *tok_bias, TokenType type) {
+static Token *get_other_token(const char *code, size_t *tok_bias,
+                              TokenType type) {
   // boundary test: null pointer
   is_null(code);
   is_null(tok_bias);
   // first scan
-  if (type == Identity) {
+  if (type == Identifier) {
     *tok_bias = 0;
   } else if (type == Symbol || type == StringLiteral) {
     *tok_bias = 1;
@@ -210,7 +205,7 @@ Token *get_other_token(const char *code, size_t *tok_bias, TokenType type) {
     } else if (type == Type && isalnum(current_char)) {
       // typ := [a-zA-Z]*
       *tok_bias += 1;
-    } else if ((type == Identity || type == Symbol) &&
+    } else if ((type == Identifier || type == Symbol) &&
                (isdigit(current_char) || isalpha(current_char) ||
                 current_char == '_')) {
       // ident | sym := (`(A-Z)` | `(a-z)` | `(0-9)` | `_`)*
@@ -249,7 +244,7 @@ Token *get_other_token(const char *code, size_t *tok_bias, TokenType type) {
  * @param[in] code the code
  * @param[in] comment_bias bias of comment
  */
-void omit_comment(const char *code, size_t *comment_bias) {
+static void omit_comment(const char *code, size_t *comment_bias) {
   // boundary test: null pointer
   is_null(code);
   is_null(comment_bias);
@@ -295,7 +290,7 @@ vector_Token *tokenizer(const char *code) {
         tok = get_other_token(code + bias, &tok_bias, Type);
       } else {
         // get ident token
-        tok = get_other_token(code + bias, &tok_bias, Identity);
+        tok = get_other_token(code + bias, &tok_bias, Identifier);
       }
     } else if (current_char == '|') {
       // meet expression combine

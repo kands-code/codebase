@@ -27,6 +27,7 @@ typedef enum ExpressionType {
   IntegerExpr,  ///< inetger type
   FloatExpr,    ///< float type
   TypeExpr,     ///< type expression
+  IdentExpr,    ///< identifier
   FuncExpr,     ///< function call expression
 } ExpressionType;
 

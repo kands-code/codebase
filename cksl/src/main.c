@@ -14,7 +14,7 @@ int main(void) {
   //               diff];" "Print[LengthOfPoint[{x = 1, y = 1}]]; (* => 0.2
   //               *)");
   // vector_Token *tokens = tokenizer("p: Point := { x = 2.0, y = 1.0 }");
-  vector_Token *tokens = tokenizer("complex_IdEnt: Float := 12.3");
+  vector_Token *tokens = tokenizer("s: String := \"12.3\"; x: Integer := 13;");
   if (tokens == NULL) {
     log_warn("tokenizer failed");
   } else {

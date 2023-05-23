@@ -42,6 +42,8 @@ char *get_ExpressionType(ExpressionType type) {
     return "FloatExpr";
   case TypeExpr:
     return "TypeExpr";
+  case IdentExpr:
+    return "IdentExpr";
   case FuncExpr:
     return "FuncExpr";
   default:
@@ -59,7 +61,9 @@ vector_Token **split_Tokens_by(vector_Token *tokens, TokenType tok_type,
   vector_node_Token *current_node = tokens->head_node;
   while (current_node != NULL) {
     if (current_node->value->type == tok_type) {
-      *expr_cnt += 1;
+      if (current_node->next_node != NULL) {
+        *expr_cnt += 1;
+      }
     }
     current_node = current_node->next_node;
   }
@@ -115,14 +119,44 @@ static Expression *normal_parser(vector_Token *tokens) {
   // scan
   vector_node_Token *current_node = tokens->head_node;
   while (current_node != NULL) {
-    if (current_node->value->type == FloatLiteral) {
-      Expression *float_expr =
-          new_Expression(current_node->value->value, FloatExpr, NULL);
-      if (parsed_expr == NULL) {
-        parsed_expr = float_expr;
-      } else if (parsed_expr->type == FuncExpr) {
-        append_to_vector_Expression(parsed_expr->params, float_expr);
+    ExpressionType normal_expr_type = IntegerExpr;
+    switch (current_node->value->type) {
+    case IntegerLiteral:
+      normal_expr_type = IntegerExpr;
+      break;
+    case FloatLiteral:
+      normal_expr_type = FloatExpr;
+      break;
+    case StringLiteral:
+      normal_expr_type = StringExpr;
+      break;
+    case Symbol:
+      normal_expr_type = SymbolExpr;
+      break;
+    case Identifier:
+      if (current_node->next_node != NULL &&
+          current_node->next_node->value->type == OpenFunction) {
+        normal_expr_type = FuncExpr;
+      } else {
+        normal_expr_type = IdentExpr;
       }
+      break;
+    default:
+      log_error("panic: wrong token type meet [%hu]",
+                current_node->value->type);
+      exit(EXIT_FAILURE);
+    }
+
+    Expression *normal_expr = NULL;
+    if (normal_expr_type == FuncExpr) {
+    } else {
+      normal_expr =
+          new_Expression(current_node->value->value, normal_expr_type, NULL);
+    }
+    if (parsed_expr == NULL) {
+      parsed_expr = normal_expr;
+    } else if (parsed_expr->type == FuncExpr) {
+      append_to_vector_Expression(parsed_expr->params, normal_expr);
     }
     current_node = current_node->next_node;
   }
@@ -133,13 +167,12 @@ static Expression *val_bind_parser(vector_Token *lhs, vector_Token *rhs) {
   vector_Expression *params = new_vector_Expression();
   append_to_vector_Expression(
       params, new_Expression(get_nth_of_vector_Token(lhs, 1)->value->value,
-                             TypeExpr, NULL));
+                             IdentExpr, NULL));
   append_to_vector_Expression(
       params, new_Expression(get_nth_of_vector_Token(lhs, 3)->value->value,
                              TypeExpr, NULL));
   append_to_vector_Expression(params, normal_parser(rhs));
   Expression *val_bind = new_Expression("ValBind", FuncExpr, params);
-  show_Expression(val_bind->params->head_node->value, 0);
   return val_bind;
 }
 
